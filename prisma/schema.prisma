@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  business      Business?
+}
+
+model Business {
+  id             String      @id @default(cuid())
+  ownerId        String      @unique
+  owner          User        @relation(fields: [ownerId], references: [id])
+  nome           String
+  slug           String      @unique          // used in public booking URL
+  endereco       String?
+  cidade         String?
+  estado         String?
+  telefoneWhats  String      // main WhatsApp
+  politicaCancel String?     // free text policy
+  
+  autoReplyEnabled Boolean @default(false)
+  autoReplyConfig  Json?
+
+  servicos       Servico[]
+  horarios       HorarioAtendimento[]
+  bookings       Booking[]
+  waitlist       WaitlistEntry[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Servico {
+  id          String    @id @default(cuid())
+  businessId  String
+  business    Business  @relation(fields: [businessId], references: [id])
+  nome        String
+  descricao   String?
+  preco       Int       // cents in BRL
+  duracaoMin  Int       // duration in minutes
+  ativo       Boolean   @default(true)
+  bookings    Booking[]
+}
+
+model HorarioAtendimento {
+  id          String    @id @default(cuid())
+  businessId  String
+  business    Business  @relation(fields: [businessId], references: [id])
+  diaSemana   Int       // 0 = Sunday ... 6 = Saturday
+  inicioMin   Int       // minutes from 00:00
+  fimMin      Int       // minutes from 00:00
+  ativo       Boolean   @default(true)
+}
+
+model Booking {
+  id             String    @id @default(cuid())
+  businessId     String
+  business       Business  @relation(fields: [businessId], references: [id])
+  servicoId      String
+  servico        Servico   @relation(fields: [servicoId], references: [id])
+
+  clienteNome    String
+  clienteWhats   String
+  dataHora       DateTime
+  status         BookingStatus @default(AGENDADO)
+  cancellationReason String?
+  cancelledAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  waitlistEntry  WaitlistEntry?
+}
+
+model WaitlistEntry {
+  id            String    @id @default(cuid())
+  businessId    String
+  business      Business  @relation(fields: [businessId], references: [id])
+  clienteNome   String
+  clienteWhats  String
+  dataDesejada  DateTime
+  preferencia   String?   // e.g. "antes das 14h"
+  status        WaitlistStatus @default(ATIVO)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  bookingId     String?   @unique
+  booking       Booking?  @relation(fields: [bookingId], references: [id])
+}
+
+enum BookingStatus {
+  AGENDADO
+  CANCELADO
+  CONCLUIDO
+}
+
+enum WaitlistStatus {
+  ATIVO
+  OFERECIDO
+  ACEITO
+  PULADO
+}

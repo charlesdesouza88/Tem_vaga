@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AgendamentoFácil - Protótipo SaaS
 
-## Getting Started
+Plataforma de agendamento para profissionais brasileiros (manicures, barbeiros, personal trainers, etc.) com foco em WhatsApp.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Framework**: Next.js 14+ (App Router)
+- **Linguagem**: TypeScript
+- **Estilização**: TailwindCSS + shadcn/ui
+- **Banco de Dados**: PostgreSQL (via Prisma ORM)
+- **Auth**: NextAuth.js (Credentials)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuração do Ambiente
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Instalar dependências**:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Configurar Variáveis de Ambiente**:
+   O arquivo `.env` já foi criado com valores de exemplo. Para produção, atualize `DATABASE_URL` e segredos do NextAuth/WhatsApp.
 
-## Learn More
+   ```env
+   DATABASE_URL="postgresql://user:password@host:5432/db"
+   NEXTAUTH_SECRET="change_me"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Banco de Dados**:
+   Certifique-se de ter um banco PostgreSQL rodando.
+   Atualize a `DATABASE_URL` no `.env`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   Execute as migrações (se tiver o banco conectado):
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+   
+   *Nota: Como este é um protótipo inicial, se você não tiver um banco rodando, o Prisma Client foi gerado mas as queries falharão em tempo de execução.*
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Rodar o projeto**:
+   ```bash
+   npm run dev
+   ```
+   Acesse [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+## Funcionalidades Implementadas
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Landing Page**: Página inicial de marketing.
+- **Autenticação**: Login e Cadastro (Email/Senha).
+- **Dashboard (Agenda)**: Visualização dos agendamentos do dia.
+- **Agendamento Público**: Link `/b/[slug]` para clientes agendarem.
+- **Cancelamento**: Link de cancelamento fácil `/cancel/[id]`.
+- **Lista de Espera**: Lógica (stub) para oferecer horários vagos.
+- **WhatsApp**: Stubs para envio de mensagens.
+- **Configuração**: UI para configurar respostas automáticas.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Estrutura de Pastas
+
+- `src/app`: Rotas e páginas (App Router).
+- `src/lib`: Utilitários (Prisma, Auth, WhatsApp, Waitlist).
+- `prisma`: Schema do banco de dados.
+- `src/components`: Componentes UI.
+
+## Próximos Passos
+
+- Integração real com WhatsApp Cloud API.
+- Implementação de IA para respostas automáticas.
+- Melhoria na lógica de horários disponíveis (overlap, intervalos).
+- Integração com gateway de pagamento (opcional).
