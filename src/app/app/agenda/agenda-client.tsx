@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { CalendarX, CheckCircle, Clock, MoreVertical } from "lucide-react"
+import { Calendar, Clock, Phone, X } from "lucide-react"
 
 type BookingWithService = Booking & { servico: Servico }
 
@@ -37,46 +37,56 @@ export default function AgendaClient({ bookings }: { bookings: BookingWithServic
     return (
         <div className="space-y-4">
             {bookings.length === 0 ? (
-                <div className="text-center py-10 text-slate-500 bg-white rounded-lg border border-slate-100 shadow-sm">
-                    <p>Nenhum agendamento para hoje.</p>
+                <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-neutral-300">
+                    <Calendar className="mx-auto mb-4 text-neutral-400" size={48} />
+                    <p className="text-neutral-600 font-medium">Nenhum agendamento para hoje</p>
+                    <p className="text-neutral-500 text-sm mt-1">Novos agendamentos aparecerão aqui</p>
                 </div>
             ) : (
                 bookings.map((booking) => (
                     <div
                         key={booking.id}
-                        className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        className="bg-white p-6 rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all"
                     >
-                        <div className="flex items-start gap-4">
-                            <div className="bg-blue-50 text-blue-600 p-3 rounded-lg font-bold text-lg">
-                                {format(new Date(booking.dataHora), "HH:mm")}
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-slate-900">{booking.clienteNome}</h3>
-                                <p className="text-sm text-slate-500">{booking.servico.nome} • {booking.servico.duracaoMin} min</p>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <StatusBadge status={booking.status} />
-                                    <span className="text-xs text-slate-400">{booking.clienteWhats}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            {/* Left: Time & Info */}
+                            <div className="flex items-start gap-4">
+                                <div className="bg-primary-100 text-primary-700 px-4 py-3 rounded-xl font-bold text-xl min-w-[80px] text-center">
+                                    {format(new Date(booking.dataHora), "HH:mm")}
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="font-bold text-neutral-900 text-lg mb-1">{booking.clienteNome}</h3>
+                                    <div className="flex items-center gap-2 text-sm text-neutral-600 mb-2">
+                                        <Clock size={16} />
+                                        <span>{booking.servico.nome} • {booking.servico.duracaoMin} min</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <StatusBadge status={booking.status} />
+                                        <div className="flex items-center gap-1 text-xs text-neutral-500">
+                                            <Phone size={14} />
+                                            <span>{booking.clienteWhats}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="flex items-center gap-2 self-end sm:self-center">
+                            {/* Right: Actions */}
                             {booking.status === "AGENDADO" && (
-                                <>
+                                <div className="flex items-center gap-2 self-end sm:self-center">
                                     <button
                                         onClick={() => handleRemind(booking)}
-                                        className="text-xs font-medium text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition-colors"
+                                        className="px-4 py-2 bg-primary-50 text-primary-700 font-medium text-sm rounded-xl hover:bg-primary-100 border-2 border-primary-200 transition-colors"
                                     >
                                         Lembrete
                                     </button>
                                     <button
                                         onClick={() => handleCancel(booking.id)}
                                         disabled={loadingId === booking.id}
-                                        className="text-xs font-medium text-red-600 hover:bg-red-50 px-3 py-2 rounded-md transition-colors disabled:opacity-50"
+                                        className="px-4 py-2 bg-white text-red-600 font-medium text-sm rounded-xl hover:bg-red-50 border-2 border-red-200 transition-colors disabled:opacity-50"
                                     >
                                         {loadingId === booking.id ? "..." : "Cancelar"}
                                     </button>
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -88,10 +98,22 @@ export default function AgendaClient({ bookings }: { bookings: BookingWithServic
 
 function StatusBadge({ status }: { status: string }) {
     if (status === "AGENDADO") {
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Confirmado</span>
+        return (
+            <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                Confirmado
+            </span>
+        )
     }
     if (status === "CANCELADO") {
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Cancelado</span>
+        return (
+            <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+                Cancelado
+            </span>
+        )
     }
-    return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">{status}</span>
+    return (
+        <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-neutral-100 text-neutral-700 border border-neutral-200">
+            {status}
+        </span>
+    )
 }

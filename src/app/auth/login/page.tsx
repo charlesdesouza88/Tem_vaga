@@ -4,6 +4,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { LogIn } from "lucide-react"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -38,53 +39,88 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-            <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+        <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
+            <div className="max-w-md w-full">
+                {/* Logo/Brand */}
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-slate-900">Bem-vindo de volta</h1>
-                    <p className="text-slate-600 mt-2">Entre na sua conta para gerenciar sua agenda</p>
+                    <Link href="/" className="inline-block">
+                        <h1 className="text-4xl font-bold text-primary-600 mb-2">Tem_vaga</h1>
+                    </Link>
+                    <p className="text-neutral-600">Gerencie seus agendamentos com facilidade</p>
                 </div>
 
-                {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">
-                        {error}
+                {/* Login Card */}
+                <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-neutral-200">
+                    <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-neutral-900">Bem-vindo de volta</h2>
+                        <p className="text-neutral-600 mt-1">Entre na sua conta para continuar</p>
                     </div>
-                )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Senha</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
-                    >
-                        {loading ? "Entrando..." : "Entrar"}
-                    </button>
-                </form>
+                    {error && (
+                        <div className="bg-red-50 border-2 border-red-200 text-red-700 p-4 rounded-xl text-sm mb-6">
+                            {error}
+                        </div>
+                    )}
 
-                <div className="mt-6 text-center text-sm text-slate-600">
-                    Não tem uma conta?{" "}
-                    <Link href="/auth/register" className="text-blue-600 hover:underline">
-                        Cadastre-se
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all"
+                                placeholder="seu@email.com"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                                Senha
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all"
+                                placeholder="••••••••"
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-primary-600 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                        >
+                            {loading ? (
+                                "Entrando..."
+                            ) : (
+                                <>
+                                    <LogIn size={20} />
+                                    Entrar
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-neutral-600">
+                            Não tem uma conta?{" "}
+                            <Link href="/auth/register" className="text-primary-600 hover:text-primary-700 font-semibold">
+                                Cadastre-se grátis
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+
+                {/* Back to home */}
+                <div className="text-center mt-6">
+                    <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-700 transition-colors">
+                        ← Voltar para o início
                     </Link>
                 </div>
             </div>

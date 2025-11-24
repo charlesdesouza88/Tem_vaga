@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { supabaseAdmin } from "@/lib/supabase-admin"
 import { NextResponse } from "next/server"
 import { sendBookingConfirmation } from "@/lib/whatsapp"
 
@@ -11,41 +11,107 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing fields" }, { status: 400 })
         }
 
+        const bookingId = crypto.randomUUID()
+        const bookingDate = new Date(dataHora)
+
         // Create Booking
-        const booking = await prisma.booking.create({
-            data: {
+        const { data: booking, error: bookingError } = await supabaseAdmin
+            .from('Booking')
+            .insert({
+                id: bookingId,
                 businessId,
                 servicoId,
                 clienteNome,
                 clienteWhats,
-                dataHora: new Date(dataHora),
+                dataHora: bookingDate.toISOString(),
                 status: "AGENDADO",
-            },
-            include: {
-                business: true,
-                servico: true
-            }
-        })
+                updatedAt: new Date().toISOString(),
+            })
+            .select('*, business:Business(*), servico:Servico(*)')
+            .single()
+
+        if (bookingError) {
+            console.error("Supabase Booking Create Error:", bookingError)
+            throw bookingError
+        }
 
         // Handle Waitlist
         if (joinWaitlist) {
-            await prisma.waitlistEntry.create({
-                data: {
+            const waitlistId = crypto.randomUUID()
+            const { error: waitlistError } = await supabaseAdmin
+                .from('WaitlistEntry')
+                .insert({
+                    id: waitlistId,
                     businessId,
                     clienteNome,
                     clienteWhats,
-                    dataDesejada: new Date(dataHora), // Ideally this would be the *desired* date, which might be different if they booked a later slot?
-                    // For the prototype, let's assume they booked a slot but want an earlier one on the same day or just want to be on the list.
-                    // The prompt says: "Checkbox: “Quero entrar na fila se abrir horário mais cedo.”"
-                    // So we use the same date.
-                    bookingId: booking.id,
+                    dataDesejada: bookingDate.toISOString(),
+                    bookingId: bookingId,
                     status: "ATIVO",
-                }
-            })
+                    updatedAt: new Date().toISOString(),
+                })
+
+            if (waitlistError) {
+                console.error("Supabase Waitlist Create Error:", waitlistError)
+                // Log error but don't fail the booking
+            }
         }
 
         // Send Confirmation
-        await sendBookingConfirmation(booking, booking.business)
+        // Note: booking.business might be an array or object depending on Supabase response.
+        // We cast or check it.
+        const businessData = Array.isArray(booking.business) ? booking.business[0] : booking.business
+
+        if (businessData) {
+            await sendBookingConfirmation(booking, businessData)
+
+            // Sync to Google Calendar
+            if (businessData.googleRefreshToken) {
+                try {
+                    const { google } = require('googleapis')
+                    const oauth2Client = new google.auth.OAuth2(
+                        process.env.GOOGLE_CLIENT_ID,
+                        process.env.GOOGLE_CLIENT_SECRET
+                    )
+
+                    oauth2Client.setCredentials({
+                        refresh_token: businessData.googleRefreshToken
+                    })
+
+                    const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
+
+                    const event = {
+                        summary: `Agendamento: ${booking.servico.nome} - ${booking.clienteNome}`,
+                        description: `Cliente: ${booking.clienteNome}\nWhatsApp: ${booking.clienteWhats}\nServiço: ${booking.servico.nome}`,
+                        start: {
+                            dateTime: booking.dataHora, // ISO string
+                            timeZone: 'America/Sao_Paulo', // Ideally from business settings
+                        },
+                        end: {
+                            dateTime: new Date(new Date(booking.dataHora).getTime() + booking.servico.duracaoMin * 60000).toISOString(),
+                            timeZone: 'America/Sao_Paulo',
+                        },
+                    }
+
+                    const calendarId = businessData.googleCalendarId || 'primary'
+
+                    const { data: googleEvent } = await calendar.events.insert({
+                        calendarId: calendarId,
+                        resource: event,
+                    })
+
+                    if (googleEvent.id) {
+                        await supabaseAdmin
+                            .from('Booking')
+                            .update({ googleEventId: googleEvent.id })
+                            .eq('id', booking.id)
+                    }
+                } catch (googleError) {
+                    console.error("Google Calendar Sync Error:", googleError)
+                    // Don't fail the request, just log
+                }
+            }
+        }
 
         return NextResponse.json({ booking })
     } catch (error) {

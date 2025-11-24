@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { supabaseAdmin } from "@/lib/supabase-admin"
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
@@ -13,23 +13,33 @@ export async function POST(req: Request) {
         const body = await req.json()
         const { autoReplyEnabled, autoReplyConfig, endereco } = body
 
-        const user = await prisma.user.findUnique({
-            where: { id: session.user.id as string },
-            include: { business: true },
-        })
+        const { data: user } = await supabaseAdmin
+            .from('User')
+            .select('*, business:Business(*)')
+            .eq('id', session.user.id as string)
+            .single()
 
         if (!user?.business) {
             return NextResponse.json({ error: "Business not found" }, { status: 404 })
         }
 
-        await prisma.business.update({
-            where: { id: user.business.id },
-            data: {
+        // Handle business being array or object
+        const businessData = Array.isArray(user.business) ? user.business[0] : user.business
+
+        const { error: updateError } = await supabaseAdmin
+            .from('Business')
+            .update({
                 autoReplyEnabled,
                 autoReplyConfig,
                 endereco,
-            },
-        })
+                updatedAt: new Date().toISOString(),
+            })
+            .eq('id', businessData.id)
+
+        if (updateError) {
+            console.error("Settings update error:", updateError)
+            throw updateError
+        }
 
         return NextResponse.json({ success: true })
     } catch (error) {
