@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin"
+import { verifyPassword } from "@/lib/password"
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -18,23 +19,29 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
+                    console.log("Auth failed: Missing credentials")
                     return null
                 }
 
-                const { data: user } = await supabase
+                const { data: user, error } = await supabase
                     .from('User')
                     .select('*')
                     .eq('email', credentials.email)
                     .single()
 
-                if (!user) {
+                if (error || !user) {
+                    console.log("Auth failed: User not found", error)
                     return null
                 }
 
-                // Temporary plain text check as per prototype plan
-                const isValid = credentials.password === user.passwordHash
+                // Use bcrypt to verify password
+                const isValid = await verifyPassword(
+                    credentials.password,
+                    user.passwordHash
+                )
 
                 if (!isValid) {
+                    console.log("Auth failed: Invalid password")
                     return null
                 }
 

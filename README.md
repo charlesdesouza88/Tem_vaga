@@ -304,25 +304,36 @@ NEXT_PUBLIC_APP_URL="https://yourdomain.com"
 
 ## 🔒 Security
 
-### Current Status (v1.0.0)
+### Current Status (v1.1.0)
 
-⚠️ **For Development Only**
+✅ **Implemented (Production-Ready)**
 
-- Passwords stored in plain text
-- No rate limiting
-- No input validation
-- Tokens not encrypted
+- ✅ Passwords hashed with bcrypt (12 salt rounds)
+- ✅ Rate limiting on all critical endpoints
+- ✅ Input validation with Zod schemas
+- ✅ Proper error handling with Portuguese messages
+- ✅ Password strength requirements (8+ chars, uppercase, lowercase, number)
+
+⚠️ **Acceptable for MVP**
+
+- OAuth tokens stored in database (standard practice)
+- In-memory rate limiting (use Redis for multi-server production)
 
 ### Production Checklist
 
-- [ ] Implement bcrypt password hashing
-- [ ] Add rate limiting (express-rate-limit)
-- [ ] Add input validation (zod)
-- [ ] Encrypt sensitive tokens
-- [ ] Add CSRF protection
-- [ ] Implement proper error handling
-- [ ] Add security headers
-- [ ] Set up monitoring
+- [x] Implement bcrypt password hashing
+- [x] Add rate limiting
+- [x] Add input validation (zod)
+- [x] Add security headers (X-Frame-Options, CSP, etc.)
+- [x] Implement request logging for audit trail
+- [x] Add CSRF protection (origin validation)
+- [x] Standardized error handling
+- [ ] Use Redis for distributed rate limiting (optional for multi-server)
+- [ ] Move logs to database or logging service
+- [ ] Set up monitoring and alerting (Sentry, DataDog)
+- [ ] Implement password reset flow for existing users
+- [ ] Enable HSTS in production (HTTPS only)
+- [ ] Review and tighten CSP for production
 
 ---
 

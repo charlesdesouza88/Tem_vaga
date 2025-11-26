@@ -1,15 +1,37 @@
 import { supabaseAdmin } from "@/lib/supabase-admin"
 import { NextResponse } from "next/server"
 import { sendBookingConfirmation } from "@/lib/whatsapp"
+import { createBookingSchema } from "@/lib/validations"
+import { rateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 
 export async function POST(req: Request) {
+    // Apply rate limiting
+    const identifier = getClientIdentifier(req)
+    const rateLimitResponse = rateLimit(identifier, RATE_LIMITS.PUBLIC)
+    if (rateLimitResponse) {
+        return rateLimitResponse
+    }
+
     try {
         const body = await req.json()
-        const { businessId, servicoId, dataHora, clienteNome, clienteWhats, joinWaitlist } = body
 
-        if (!businessId || !servicoId || !dataHora || !clienteNome || !clienteWhats) {
-            return NextResponse.json({ error: "Missing fields" }, { status: 400 })
+        // Validate input
+        const validationResult = createBookingSchema.safeParse(body)
+
+        if (!validationResult.success) {
+            return NextResponse.json(
+                {
+                    error: "Dados inválidos",
+                    details: validationResult.error.issues.map((err) => ({
+                        field: err.path.join('.'),
+                        message: err.message
+                    }))
+                },
+                { status: 400 }
+            )
         }
+
+        const { businessId, servicoId, dataHora, clienteNome, clienteWhats, joinWaitlist } = validationResult.data
 
         const bookingId = crypto.randomUUID()
         const bookingDate = new Date(dataHora)
