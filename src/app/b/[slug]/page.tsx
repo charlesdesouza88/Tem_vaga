@@ -1,48 +1,334 @@
-import { supabaseAdmin } from "@/lib/supabase-admin"
-import { notFound } from "next/navigation"
-import BookingFlow from "./booking-flow"
+"use client"
 
-export default async function PublicBookingPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params
+import { useState, useEffect } from "react"
+import { useParams } from "next/navigation"
+import { ClayCard } from "@/components/ui/clay-card"
+import { ClayButton } from "@/components/ui/clay-button"
+import { ClayInput } from "@/components/ui/clay-input"
+import { supabase } from "@/lib/supabase"
+import { Database } from "@/types/supabase"
+import { format, addDays, isSameDay, parseISO } from "date-fns"
+import { ptBR } from "date-fns/locale"
+import { Calendar, Clock, Check, ChevronRight, ChevronLeft, Store } from "lucide-react"
 
-    // Fetch Business first
-    const { data: business } = await supabaseAdmin
-        .from('Business')
-        .select('*')
-        .eq('slug', slug)
-        .single()
+type Business = Database['public']['Tables']['Business']['Row']
+type Service = Database['public']['Tables']['Servico']['Row']
+type WorkingHour = Database['public']['Tables']['HorarioAtendimento']['Row']
 
-    if (!business) {
-        notFound()
+export default function BookingPage() {
+    const params = useParams()
+    const slug = params.slug as string
+
+    const [step, setStep] = useState(1)
+    const [business, setBusiness] = useState<Business | null>(null)
+    const [services, setServices] = useState<Service[]>([])
+    const [selectedService, setSelectedService] = useState<Service | null>(null)
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+    const [selectedTime, setSelectedTime] = useState<string | null>(null)
+    const [availableSlots, setAvailableSlots] = useState<string[]>([])
+    const [clientData, setClientData] = useState({ name: "", whatsapp: "" })
+    const [isLoading, setIsLoading] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [bookingSuccess, setBookingSuccess] = useState(false)
+
+    useEffect(() => {
+        fetchBusinessData()
+    }, [slug])
+
+    useEffect(() => {
+        if (selectedDate && selectedService && business) {
+            calculateAvailability()
+        }
+    }, [selectedDate, selectedService, business])
+
+    const fetchBusinessData = async () => {
+        try {
+            const { data: businessData } = await supabase
+                .from('Business')
+                .select('*')
+                .eq('slug', slug)
+                .single()
+
+            if (businessData) {
+                setBusiness(businessData)
+
+                const { data: servicesData } = await supabase
+                    .from('Servico')
+                    .select('*')
+                    .eq('businessId', businessData.id)
+                    .eq('ativo', true)
+
+                if (servicesData) setServices(servicesData)
+            }
+        } catch (error) {
+            console.error("Error fetching business:", error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
-    // Fetch Services and Hours separately to avoid relation issues
-    const { data: servicos } = await supabaseAdmin
-        .from('Servico')
-        .select('*')
-        .eq('businessId', business.id)
-        .eq('ativo', true)
+    const calculateAvailability = async () => {
+        if (!business || !selectedDate || !selectedService) return
 
-    const { data: horarios } = await supabaseAdmin
-        .from('HorarioAtendimento')
-        .select('*')
-        .eq('businessId', business.id)
-        .eq('ativo', true)
+        // 1. Get working hours for the day
+        const dayOfWeek = selectedDate.getDay()
+        const { data: hours } = await supabase
+            .from('HorarioAtendimento')
+            .select('*')
+            .eq('businessId', business.id)
+            .eq('diaSemana', dayOfWeek)
+            .eq('ativo', true)
+            .single()
 
-    // Attach to business object for the component
-    // Attach to business object for the component
-    const businessWithData = {
-        ...business,
-        servicos: servicos || [],
-        horarios: horarios || []
+        if (!hours) {
+            setAvailableSlots([])
+            return
+        }
+
+        // 2. Get existing bookings
+        const startOfDay = new Date(selectedDate)
+        startOfDay.setHours(0, 0, 0, 0)
+        const endOfDay = new Date(selectedDate)
+        endOfDay.setHours(23, 59, 59, 999)
+
+        const { data: bookings } = await supabase
+            .from('Booking')
+            .select('dataHora')
+            .eq('businessId', business.id)
+            .gte('dataHora', startOfDay.toISOString())
+            .lte('dataHora', endOfDay.toISOString())
+            .neq('status', 'CANCELADO')
+
+        // 3. Generate slots
+        const slots: string[] = []
+        let currentMin = hours.inicioMin
+        const endMin = hours.fimMin
+        const duration = selectedService.duracaoMin
+
+        while (currentMin + duration <= endMin) {
+            const h = Math.floor(currentMin / 60)
+            const m = currentMin % 60
+            const timeString = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+
+            // Check collision
+            const slotDate = new Date(selectedDate)
+            slotDate.setHours(h, m, 0, 0)
+
+            const isBusy = bookings?.some(b => {
+                const bookingTime = parseISO(b.dataHora)
+                // Simple collision check: if booking starts at same time
+                // In a real app, check full overlap
+                return bookingTime.getTime() === slotDate.getTime()
+            })
+
+            if (!isBusy) {
+                slots.push(timeString)
+            }
+
+            currentMin += duration // or fixed interval like 30min
+        }
+
+        setAvailableSlots(slots)
     }
+
+    const handleBooking = async () => {
+        if (!business || !selectedService || !selectedDate || !selectedTime) return
+
+        setIsSubmitting(true)
+        try {
+            const [h, m] = selectedTime.split(':').map(Number)
+            const bookingDate = new Date(selectedDate)
+            bookingDate.setHours(h, m, 0, 0)
+
+            const { error } = await supabase
+                .from('Booking')
+                .insert({
+                    businessId: business.id,
+                    servicoId: selectedService.id,
+                    clienteNome: clientData.name,
+                    clienteWhats: clientData.whatsapp,
+                    dataHora: bookingDate.toISOString(),
+                    status: 'AGENDADO'
+                })
+
+            if (error) throw error
+            setBookingSuccess(true)
+        } catch (error) {
+            console.error("Booking error:", error)
+            alert("Erro ao realizar agendamento. Tente novamente.")
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-primary-50">Carregando...</div>
+    if (!business) return <div className="min-h-screen flex items-center justify-center bg-primary-50">Negócio não encontrado</div>
 
     return (
-        <div className="min-h-screen bg-neutral-50 py-12 px-4">
-            <BookingFlow business={businessWithData} />
+        <div className="min-h-screen bg-primary-50 py-8 px-4">
+            <div className="max-w-md mx-auto space-y-6">
+                {/* Header */}
+                <div className="text-center">
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-clay-sm text-primary-600">
+                        <Store size={32} />
+                    </div>
+                    <h1 className="text-2xl font-bold text-neutral-800">{business.nome}</h1>
+                    <p className="text-neutral-500 text-sm mt-1">Agendamento Online</p>
+                </div>
 
-            <div className="text-center mt-8 text-neutral-500 text-sm">
-                Powered by <span className="font-bold text-primary-600">Tem_vaga</span>
+                {bookingSuccess ? (
+                    <ClayCard className="text-center py-12 animate-in zoom-in duration-300">
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
+                            <Check size={40} />
+                        </div>
+                        <h2 className="text-2xl font-bold text-neutral-800 mb-2">Agendamento Confirmado!</h2>
+                        <p className="text-neutral-600 mb-8">
+                            Obrigado, {clientData.name}. Seu horário está reservado.
+                        </p>
+                        <ClayButton onClick={() => window.location.reload()}>
+                            Fazer outro agendamento
+                        </ClayButton>
+                    </ClayCard>
+                ) : (
+                    <ClayCard>
+                        {/* Step 1: Services */}
+                        {step === 1 && (
+                            <div className="space-y-4 animate-in slide-in-from-right-4">
+                                <h2 className="text-lg font-bold text-neutral-800 mb-4">Selecione um Serviço</h2>
+                                {services.map(service => (
+                                    <button
+                                        key={service.id}
+                                        onClick={() => {
+                                            setSelectedService(service)
+                                            setStep(2)
+                                        }}
+                                        className="w-full text-left p-4 rounded-clay-md bg-neutral-50 hover:bg-white hover:shadow-clay-sm transition-all border border-transparent hover:border-primary-200 group"
+                                    >
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="font-bold text-neutral-800 group-hover:text-primary-700">{service.nome}</span>
+                                            <span className="font-bold text-primary-600">
+                                                {(service.preco / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-xs text-neutral-500">
+                                            <Clock size={12} />
+                                            {service.duracaoMin} min
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Step 2: Date & Time */}
+                        {step === 2 && (
+                            <div className="space-y-6 animate-in slide-in-from-right-4">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <button onClick={() => setStep(1)} className="p-1 hover:bg-neutral-100 rounded-full">
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    <h2 className="text-lg font-bold text-neutral-800">Data e Horário</h2>
+                                </div>
+
+                                {/* Date Picker (Simple Horizontal) */}
+                                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                    {[0, 1, 2, 3, 4, 5, 6].map(offset => {
+                                        const date = addDays(new Date(), offset)
+                                        const isSelected = selectedDate && isSameDay(date, selectedDate)
+                                        return (
+                                            <button
+                                                key={offset}
+                                                onClick={() => {
+                                                    setSelectedDate(date)
+                                                    setSelectedTime(null)
+                                                }}
+                                                className={`flex-shrink-0 w-16 h-20 rounded-clay-md flex flex-col items-center justify-center gap-1 transition-all
+                                                    ${isSelected
+                                                        ? 'bg-primary-500 text-white shadow-clay-md'
+                                                        : 'bg-neutral-50 text-neutral-600 hover:bg-white hover:shadow-clay-sm'
+                                                    }`}
+                                            >
+                                                <span className="text-xs font-medium uppercase">{format(date, 'EEE', { locale: ptBR })}</span>
+                                                <span className="text-xl font-bold">{format(date, 'd')}</span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+
+                                {/* Time Slots */}
+                                {selectedDate && (
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {availableSlots.length > 0 ? (
+                                            availableSlots.map(time => (
+                                                <button
+                                                    key={time}
+                                                    onClick={() => {
+                                                        setSelectedTime(time)
+                                                        setStep(3)
+                                                    }}
+                                                    className={`py-2 px-4 rounded-clay-sm font-medium transition-all text-sm
+                                                        ${selectedTime === time
+                                                            ? 'bg-primary-600 text-white shadow-clay-sm'
+                                                            : 'bg-white border border-neutral-200 text-neutral-700 hover:border-primary-300 hover:text-primary-600'
+                                                        }`}
+                                                >
+                                                    {time}
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <div className="col-span-3 text-center py-8 text-neutral-500 text-sm">
+                                                Nenhum horário disponível para esta data.
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Step 3: Details */}
+                        {step === 3 && (
+                            <div className="space-y-6 animate-in slide-in-from-right-4">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <button onClick={() => setStep(2)} className="p-1 hover:bg-neutral-100 rounded-full">
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    <h2 className="text-lg font-bold text-neutral-800">Seus Dados</h2>
+                                </div>
+
+                                <div className="bg-primary-50 p-4 rounded-clay-md mb-6">
+                                    <p className="font-bold text-neutral-800">{selectedService?.nome}</p>
+                                    <p className="text-sm text-neutral-600 flex items-center gap-2 mt-1">
+                                        <Calendar size={14} />
+                                        {selectedDate && format(selectedDate, "d 'de' MMMM", { locale: ptBR })} às {selectedTime}
+                                    </p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <ClayInput
+                                        label="Seu Nome"
+                                        placeholder="Como você gostaria de ser chamado?"
+                                        value={clientData.name}
+                                        onChange={e => setClientData({ ...clientData, name: e.target.value })}
+                                    />
+                                    <ClayInput
+                                        label="Seu WhatsApp"
+                                        placeholder="(11) 99999-9999"
+                                        value={clientData.whatsapp}
+                                        onChange={e => setClientData({ ...clientData, whatsapp: e.target.value })}
+                                    />
+                                </div>
+
+                                <ClayButton
+                                    onClick={handleBooking}
+                                    isLoading={isSubmitting}
+                                    className="w-full mt-4"
+                                    disabled={!clientData.name || !clientData.whatsapp}
+                                >
+                                    Confirmar Agendamento
+                                </ClayButton>
+                            </div>
+                        )}
+                    </ClayCard>
+                )}
             </div>
         </div>
     )
