@@ -302,6 +302,47 @@ NEXT_PUBLIC_APP_URL="https://yourdomain.com"
 
 ---
 
+## 🐳 Docker Deployment
+
+This project includes full Docker support for easy containerization and deployment.
+
+### Quick Start with Docker
+
+**Build and run locally:**
+```bash
+# Using the deployment script (recommended)
+./deploy.sh
+
+# Or manually
+docker-compose up -d
+```
+
+**Health check:**
+```bash
+curl http://localhost:3000/api/health
+```
+
+### Files Included
+
+- `Dockerfile` - Multi-stage production build
+- `docker-compose.yml` - Compose configuration
+- `.dockerignore` - Build optimization
+- `deploy.sh` - Interactive deployment script
+
+### Deployment Platforms
+
+We support deployment to:
+- ✅ **Vercel** (Recommended for Next.js)
+- ✅ **Railway** (Great Docker support)
+- ✅ **Render** (Free tier available)
+- ✅ **Google Cloud Run**
+- ✅ **AWS EC2**
+- ✅ **DigitalOcean**
+
+**📖 See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment documentation with step-by-step guides for all platforms.**
+
+---
+
 ## 🔒 Security
 
 ### Current Status (v1.1.0)
