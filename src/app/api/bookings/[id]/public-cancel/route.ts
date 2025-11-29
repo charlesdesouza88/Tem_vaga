@@ -1,40 +1,54 @@
-import { prisma } from "@/lib/prisma"
+import { supabaseAdmin } from "@/lib/supabase"
 import { NextResponse } from "next/server"
 import { offerSlotToWaitlist } from "@/lib/waitlist"
 import { sendCancellationNotification } from "@/lib/whatsapp"
+import { Database } from "@/types/supabase"
+import { createBookingUpdate } from "@/lib/supabase-helpers"
+
+type Booking = Database['public']['Tables']['Booking']['Row']
+type Business = Database['public']['Tables']['Business']['Row']
 
 export async function POST(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const bookingId = params.id
+    const { id: bookingId } = await params
 
     try {
-        const booking = await prisma.booking.findUnique({
-            where: { id: bookingId },
-            include: { business: true },
-        })
+        // 1. Fetch booking with business
+        const { data: bookingData, error: bookingError } = await supabaseAdmin
+            .from('Booking')
+            .select('*, business:Business(*)')
+            .eq('id', bookingId)
+            .single()
 
-        if (!booking) {
+        if (bookingError || !bookingData) {
             return NextResponse.json({ error: "Booking not found" }, { status: 404 })
         }
 
-        // In a real app, we would verify a token here to ensure secure cancellation
-        // For prototype, we assume possession of the link (ID) is enough
+        const booking = bookingData as unknown as Booking & { business: Business }
 
-        const updatedBooking = await prisma.booking.update({
-            where: { id: bookingId },
-            data: {
+        // 2. Update booking
+        const { data: updatedBookingData, error: updateError } = await supabaseAdmin
+            .from('Booking')
+            .update(createBookingUpdate({
                 status: "CANCELADO",
-                cancelledAt: new Date(),
-            },
-        })
+                cancelledAt: new Date().toISOString(),
+            }))
+            .eq('id', bookingId)
+            .select()
+            .single()
 
-        // Trigger waitlist logic
+        if (updateError || !updatedBookingData) {
+            throw updateError || new Error("Failed to update booking")
+        }
+
+        const updatedBooking = updatedBookingData as Booking
+
+        // 3. Trigger waitlist logic
         await offerSlotToWaitlist(updatedBooking.businessId, updatedBooking)
 
-        // Notify business owner (optional, but good)
-        // Notify customer (confirmation)
+        // 4. Notify customer
         await sendCancellationNotification(updatedBooking, booking.business)
 
         return NextResponse.json({ success: true })

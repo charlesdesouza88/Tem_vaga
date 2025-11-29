@@ -43,7 +43,7 @@ export default function CancellationPage() {
             const { error } = await supabase
                 .from('Booking')
                 .update({
-                    status: 'CANCELADO',
+                    status: 'CANCELADO' as const,
                     cancelledAt: new Date().toISOString(),
                     cancellationReason: 'Cancelado pelo cliente'
                 })
@@ -90,7 +90,7 @@ export default function CancellationPage() {
             // Update waitlist status
             await supabase
                 .from('WaitlistEntry')
-                .update({ status: 'OFERECIDO' })
+                .update({ status: 'OFERECIDO' as const })
                 .eq('id', waitlist.id)
 
             // In production: Call WhatsApp API here to send the message with a link to claim the spot
@@ -145,21 +145,31 @@ export default function CancellationPage() {
                     Ao cancelar, este horário ficará disponível para outros clientes.
                 </p>
 
-                <div className="flex gap-3">
+                <div className="flex flex-col gap-3">
                     <ClayButton
-                        variant="secondary"
-                        className="flex-1"
-                        onClick={() => window.history.back()}
+                        variant="primary"
+                        className="w-full"
+                        onClick={() => window.location.href = `/b/${bookingDetails.business.slug}?reschedule=${bookingId}`}
                     >
-                        Voltar
+                        Reagendar
                     </ClayButton>
-                    <ClayButton
-                        variant="danger"
-                        className="flex-1"
-                        onClick={handleCancel}
-                    >
-                        Confirmar Cancelamento
-                    </ClayButton>
+
+                    <div className="flex gap-3">
+                        <ClayButton
+                            variant="secondary"
+                            className="flex-1"
+                            onClick={() => window.history.back()}
+                        >
+                            Voltar
+                        </ClayButton>
+                        <ClayButton
+                            variant="danger"
+                            className="flex-1"
+                            onClick={handleCancel}
+                        >
+                            Cancelar
+                        </ClayButton>
+                    </div>
                 </div>
             </ClayCard>
         </div>

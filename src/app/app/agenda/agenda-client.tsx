@@ -1,11 +1,14 @@
 "use client"
 
-import { Booking, Servico } from "@prisma/client"
+import { Database } from "@/types/supabase"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Calendar, Clock, Phone, X } from "lucide-react"
+
+type Booking = Database['public']['Tables']['Booking']['Row']
+type Servico = Database['public']['Tables']['Servico']['Row']
 
 type BookingWithService = Booking & { servico: Servico }
 

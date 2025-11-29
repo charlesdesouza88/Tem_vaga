@@ -26,16 +26,18 @@ export async function GET(req: Request) {
         }
 
         // Get Business ID for this User
-        const { data: business } = await supabaseAdmin
+        const { data: businessData } = await supabaseAdmin
             .from('Business')
             .select('id')
             .eq('ownerId', userId)
             .single()
 
-        if (!business) {
+        if (!businessData) {
             console.error("Business not found for user:", userId)
             return NextResponse.json({ error: "Business not found" }, { status: 404 })
         }
+
+        const business = businessData as { id: string }
 
         console.log("Saving tokens for business:", business.id)
         console.log("Has refresh token:", !!tokens.refresh_token)
@@ -48,7 +50,7 @@ export async function GET(req: Request) {
                 googleAccessToken: tokens.access_token,
                 googleRefreshToken: tokens.refresh_token || null,
                 googleTokenExpiry: tokens.expiry_date || null,
-            })
+            } as any)
             .eq('id', business.id)
             .select()
 

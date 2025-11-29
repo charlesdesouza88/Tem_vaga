@@ -1,4 +1,8 @@
-import { Booking, Business, WaitlistEntry } from "@prisma/client"
+import { Database } from "@/types/supabase"
+
+type Booking = Database['public']['Tables']['Booking']['Row']
+type Business = Database['public']['Tables']['Business']['Row']
+type WaitlistEntry = Database['public']['Tables']['WaitlistEntry']['Row']
 
 const WHATSAPP_API_URL = `https://graph.facebook.com/v17.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`
 const WHATSAPP_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN

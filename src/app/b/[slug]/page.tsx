@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import { ClayCard } from "@/components/ui/clay-card"
 import { ClayButton } from "@/components/ui/clay-button"
 import { ClayInput } from "@/components/ui/clay-input"
@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase"
 import { Database } from "@/types/supabase"
 import { format, addDays, isSameDay, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Calendar, Clock, Check, ChevronRight, ChevronLeft, Store } from "lucide-react"
+import { Calendar, Clock, Check, ChevronRight, ChevronLeft, Store, RefreshCw } from "lucide-react"
 
 type Business = Database['public']['Tables']['Business']['Row']
 type Service = Database['public']['Tables']['Servico']['Row']
@@ -17,7 +17,9 @@ type WorkingHour = Database['public']['Tables']['HorarioAtendimento']['Row']
 
 export default function BookingPage() {
     const params = useParams()
+    const searchParams = useSearchParams()
     const slug = params.slug as string
+    const rescheduleId = searchParams.get('reschedule')
 
     const [step, setStep] = useState(1)
     const [business, setBusiness] = useState<Business | null>(null)
@@ -30,16 +32,48 @@ export default function BookingPage() {
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [bookingSuccess, setBookingSuccess] = useState(false)
+    const [oldBooking, setOldBooking] = useState<any>(null)
 
     useEffect(() => {
         fetchBusinessData()
     }, [slug])
 
     useEffect(() => {
+        if (rescheduleId && business) {
+            fetchOldBooking()
+        }
+    }, [rescheduleId, business])
+
+    useEffect(() => {
         if (selectedDate && selectedService && business) {
             calculateAvailability()
         }
     }, [selectedDate, selectedService, business])
+
+    const fetchOldBooking = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('Booking')
+                .select('*, servico:Servico(*)')
+                .eq('id', rescheduleId)
+                .single()
+
+            if (data) {
+                setOldBooking(data)
+                setClientData({
+                    name: data.clienteNome,
+                    whatsapp: data.clienteWhats
+                })
+                // Pre-select service if it belongs to this business
+                if (data.servico && data.servico.businessId === business?.id) {
+                    setSelectedService(data.servico)
+                    // Don't auto-advance to step 2, let them confirm service or change it
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching old booking:", error)
+        }
+    }
 
     const fetchBusinessData = async () => {
         try {
@@ -140,18 +174,40 @@ export default function BookingPage() {
             const bookingDate = new Date(selectedDate)
             bookingDate.setHours(h, m, 0, 0)
 
-            const { error } = await supabase
-                .from('Booking')
-                .insert({
-                    businessId: business.id,
-                    servicoId: selectedService.id,
-                    clienteNome: clientData.name,
-                    clienteWhats: clientData.whatsapp,
-                    dataHora: bookingDate.toISOString(),
-                    status: 'AGENDADO'
+            if (rescheduleId) {
+                // Handle Rescheduling
+                const response = await fetch('/api/bookings/reschedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        oldBookingId: rescheduleId,
+                        newBooking: {
+                            businessId: business.id,
+                            servicoId: selectedService.id,
+                            clienteNome: clientData.name,
+                            clienteWhats: clientData.whatsapp,
+                            dataHora: bookingDate.toISOString(),
+                        }
+                    })
                 })
 
-            if (error) throw error
+                if (!response.ok) throw new Error("Falha ao reagendar")
+            } else {
+                // Handle New Booking
+                const { error } = await supabase
+                    .from('Booking')
+                    .insert({
+                        businessId: business.id,
+                        servicoId: selectedService.id,
+                        clienteNome: clientData.name,
+                        clienteWhats: clientData.whatsapp,
+                        dataHora: bookingDate.toISOString(),
+                        status: 'AGENDADO'
+                    })
+
+                if (error) throw error
+            }
+
             setBookingSuccess(true)
         } catch (error) {
             console.error("Booking error:", error)
@@ -176,16 +232,31 @@ export default function BookingPage() {
                     <p className="text-neutral-500 text-sm mt-1">Agendamento Online</p>
                 </div>
 
+                {oldBooking && !bookingSuccess && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-clay-sm p-4 flex items-start gap-3 animate-in fade-in">
+                        <RefreshCw className="text-blue-500 mt-1 flex-shrink-0" size={20} />
+                        <div>
+                            <p className="font-bold text-blue-800">Reagendamento</p>
+                            <p className="text-sm text-blue-600">
+                                Você está alterando seu agendamento de {format(new Date(oldBooking.dataHora), "dd/MM 'às' HH:mm")}.
+                                O horário anterior será liberado após a confirmação.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {bookingSuccess ? (
                     <ClayCard className="text-center py-12 animate-in zoom-in duration-300">
                         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
                             <Check size={40} />
                         </div>
-                        <h2 className="text-2xl font-bold text-neutral-800 mb-2">Agendamento Confirmado!</h2>
+                        <h2 className="text-2xl font-bold text-neutral-800 mb-2">
+                            {rescheduleId ? 'Reagendamento Confirmado!' : 'Agendamento Confirmado!'}
+                        </h2>
                         <p className="text-neutral-600 mb-8">
-                            Obrigado, {clientData.name}. Seu horário está reservado.
+                            Obrigado, {clientData.name}. Seu {rescheduleId ? 'novo ' : ''}horário está reservado.
                         </p>
-                        <ClayButton onClick={() => window.location.reload()}>
+                        <ClayButton onClick={() => window.location.href = `/b/${slug}`}>
                             Fazer outro agendamento
                         </ClayButton>
                     </ClayCard>
@@ -202,10 +273,16 @@ export default function BookingPage() {
                                             setSelectedService(service)
                                             setStep(2)
                                         }}
-                                        className="w-full text-left p-4 rounded-clay-md bg-neutral-50 hover:bg-white hover:shadow-clay-sm transition-all border border-transparent hover:border-primary-200 group"
+                                        className={`w-full text-left p-4 rounded-clay-md transition-all border group
+                                            ${selectedService?.id === service.id
+                                                ? 'bg-primary-50 border-primary-200 shadow-inner'
+                                                : 'bg-neutral-50 hover:bg-white hover:shadow-clay-sm border-transparent hover:border-primary-200'
+                                            }`}
                                     >
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="font-bold text-neutral-800 group-hover:text-primary-700">{service.nome}</span>
+                                            <span className={`font-bold ${selectedService?.id === service.id ? 'text-primary-700' : 'text-neutral-800 group-hover:text-primary-700'}`}>
+                                                {service.nome}
+                                            </span>
                                             <span className="font-bold text-primary-600">
                                                 {(service.preco / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </span>
@@ -323,7 +400,7 @@ export default function BookingPage() {
                                     className="w-full mt-4"
                                     disabled={!clientData.name || !clientData.whatsapp}
                                 >
-                                    Confirmar Agendamento
+                                    {rescheduleId ? 'Confirmar Reagendamento' : 'Confirmar Agendamento'}
                                 </ClayButton>
                             </div>
                         )}

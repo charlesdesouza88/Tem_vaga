@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Business } from "@prisma/client"
+import { Database } from "@/types/supabase"
 import { Save, MessageSquare, MapPin, User, List } from "lucide-react"
+
+type Business = Database['public']['Tables']['Business']['Row']
 
 export default function AtendimentoClient({ business }: { business: Business }) {
     const [enabled, setEnabled] = useState(business.autoReplyEnabled)
