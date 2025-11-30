@@ -78,8 +78,8 @@ export async function POST(req: Request) {
         const userId = crypto.randomUUID()
 
         // 1. Create User
-        const { error: userError } = await supabase
-            .from('User')
+        const { error: userError } = await (supabase
+            .from('User') as any)
             .insert({
                 id: userId,
                 email,
@@ -97,8 +97,8 @@ export async function POST(req: Request) {
         const businessId = crypto.randomUUID()
         const slug = name?.toLowerCase().replace(/\s+/g, '-') || email.split('@')[0]
 
-        const { error: businessError } = await supabase
-            .from('Business')
+        const { error: businessError } = await (supabase
+            .from('Business') as any)
             .insert({
                 id: businessId,
                 ownerId: userId,

@@ -37,8 +37,8 @@ export async function POST(req: Request) {
 
                 // 1. Find the Business (For prototype, we pick the first one with auto-reply enabled)
                 // In production, we would match value.metadata.phone_number_id with a Business column
-                const { data: business } = await supabaseAdmin
-                    .from('Business')
+                const { data: business } = await (supabaseAdmin
+                    .from('Business') as any)
                     .select('*')
                     .eq('autoReplyEnabled', true)
                     .single()

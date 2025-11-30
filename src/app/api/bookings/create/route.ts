@@ -37,8 +37,8 @@ export async function POST(req: Request) {
         const bookingDate = new Date(dataHora)
 
         // Create Booking
-        const { data: booking, error: bookingError } = await supabaseAdmin
-            .from('Booking')
+        const { data: booking, error: bookingError } = await (supabaseAdmin
+            .from('Booking') as any)
             .insert({
                 id: bookingId,
                 businessId,
@@ -60,8 +60,8 @@ export async function POST(req: Request) {
         // Handle Waitlist
         if (joinWaitlist) {
             const waitlistId = crypto.randomUUID()
-            const { error: waitlistError } = await supabaseAdmin
-                .from('WaitlistEntry')
+            const { error: waitlistError } = await (supabaseAdmin
+                .from('WaitlistEntry') as any)
                 .insert({
                     id: waitlistId,
                     businessId,
@@ -123,10 +123,11 @@ export async function POST(req: Request) {
                     })
 
                     if (googleEvent.id) {
-                        await supabaseAdmin
-                            .from('Booking')
+                        // Update booking with Google Event ID
+                        await (supabaseAdmin
+                            .from('Booking') as any)
                             .update({ googleEventId: googleEvent.id })
-                            .eq('id', booking.id)
+                            .eq('id', bookingId)
                     }
                 } catch (googleError) {
                     console.error("Google Calendar Sync Error:", googleError)

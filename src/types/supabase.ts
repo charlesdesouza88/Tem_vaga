@@ -49,6 +49,9 @@ export interface Database {
                     autoReplyEnabled: boolean
                     autoReplyConfig: Json | null
                     googleRefreshToken: string | null
+                    googleCalendarId: string | null
+                    googleAccessToken: string | null
+                    googleTokenExpiry: number | null
                     createdAt: string
                     updatedAt: string
                 }
@@ -65,6 +68,9 @@ export interface Database {
                     autoReplyEnabled?: boolean
                     autoReplyConfig?: Json | null
                     googleRefreshToken?: string | null
+                    googleCalendarId?: string | null
+                    googleAccessToken?: string | null
+                    googleTokenExpiry?: number | null
                     createdAt?: string
                     updatedAt?: string
                 }
@@ -81,6 +87,9 @@ export interface Database {
                     autoReplyEnabled?: boolean
                     autoReplyConfig?: Json | null
                     googleRefreshToken?: string | null
+                    googleCalendarId?: string | null
+                    googleAccessToken?: string | null
+                    googleTokenExpiry?: number | null
                     createdAt?: string
                     updatedAt?: string
                 }

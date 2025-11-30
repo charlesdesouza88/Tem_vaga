@@ -19,8 +19,8 @@ export async function GET(req: Request) {
 
     try {
         // 1. Fetch Business
-        const { data: business } = await supabaseAdmin
-            .from('Business')
+        const { data: business } = await (supabaseAdmin
+            .from('Business') as any)
             .select('*')
             .eq('id', businessId)
             .single()
@@ -30,8 +30,8 @@ export async function GET(req: Request) {
         }
 
         // Fetch Hours separately
-        const { data: horarios } = await supabaseAdmin
-            .from('HorarioAtendimento')
+        const { data: horarios } = await (supabaseAdmin
+            .from('HorarioAtendimento') as any)
             .select('*')
             .eq('businessId', businessId)
             .eq('ativo', true)
@@ -59,8 +59,8 @@ export async function GET(req: Request) {
         }
 
         // 3. Fetch Existing Bookings (Supabase)
-        const { data: bookings } = await supabaseAdmin
-            .from('Booking')
+        const { data: bookings } = await (supabaseAdmin
+            .from('Booking') as any)
             .select('dataHora, servico:Servico(duracaoMin)')
             .eq('businessId', businessId)
             .gte('dataHora', startOfDay)

@@ -42,8 +42,8 @@ export async function offerSlotToWaitlist(businessId: string, cancelledBooking: 
         console.log("Would notify", entry.clienteNome, "about new slot", cancelledBooking.dataHora)
 
         // Update entry status to OFERECIDO
-        const { error: updateError } = await supabaseAdmin
-            .from('WaitlistEntry')
+        const { error: updateError } = await (supabaseAdmin
+            .from('WaitlistEntry') as any)
             .update(createWaitlistUpdate({
                 status: 'OFERECIDO'
             }))
