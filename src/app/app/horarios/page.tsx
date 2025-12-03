@@ -33,15 +33,15 @@ export default function HoursPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data: business } = await supabase
-                .from('Business')
+            const { data: business } = await (supabase
+                .from('Business') as any)
                 .select('id')
                 .eq('ownerId', user.id)
                 .single()
 
             if (business) {
-                const { data } = await supabase
-                    .from('HorarioAtendimento')
+                const { data } = await (supabase
+                    .from('HorarioAtendimento') as any)
                     .select('*')
                     .eq('businessId', business.id)
                     .order('diaSemana')
@@ -49,7 +49,7 @@ export default function HoursPage() {
                 if (data) {
                     // Ensure we have entries for all days
                     const fullWeek = DAYS.map(day => {
-                        const existing = data.find(h => h.diaSemana === day.id)
+                        const existing = data.find((h: any) => h.diaSemana === day.id)
                         return existing || {
                             businessId: business.id,
                             diaSemana: day.id,
@@ -72,8 +72,8 @@ export default function HoursPage() {
         setIsSaving(true)
         try {
             // Upsert all hours
-            const { error } = await supabase
-                .from('HorarioAtendimento')
+            const { error } = await (supabase
+                .from('HorarioAtendimento') as any)
                 .upsert(hours.map(({ id, ...h }) => h)) // Remove ID for upsert if it's temporary
 
             if (error) throw error

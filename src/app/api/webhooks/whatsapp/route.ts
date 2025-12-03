@@ -44,7 +44,7 @@ export async function POST(req: Request) {
                     .single()
 
                 if (business && business.autoReplyConfig) {
-                    const config = business.autoReplyConfig as any
+                    const config = business.autoReplyConfig as Record<string, any>
                     let replyText = ""
 
                     // 2. Simple Keyword Logic

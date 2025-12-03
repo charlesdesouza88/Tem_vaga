@@ -37,8 +37,7 @@ export async function POST(req: Request) {
         const bookingDate = new Date(dataHora)
 
         // Create Booking
-        const { data: booking, error: bookingError } = await (supabaseAdmin
-            .from('Booking') as any)
+        const { data: booking, error: bookingError } = await (supabaseAdmin.from('Booking') as any)
             .insert({
                 id: bookingId,
                 businessId,
@@ -46,7 +45,7 @@ export async function POST(req: Request) {
                 clienteNome,
                 clienteWhats,
                 dataHora: bookingDate.toISOString(),
-                status: "AGENDADO",
+                status: "AGENDADO" as const,
                 updatedAt: new Date().toISOString(),
             })
             .select('*, business:Business(*), servico:Servico(*)')
@@ -60,8 +59,7 @@ export async function POST(req: Request) {
         // Handle Waitlist
         if (joinWaitlist) {
             const waitlistId = crypto.randomUUID()
-            const { error: waitlistError } = await (supabaseAdmin
-                .from('WaitlistEntry') as any)
+            const { error: waitlistError } = await (supabaseAdmin.from('WaitlistEntry') as any)
                 .insert({
                     id: waitlistId,
                     businessId,
@@ -69,7 +67,7 @@ export async function POST(req: Request) {
                     clienteWhats,
                     dataDesejada: bookingDate.toISOString(),
                     bookingId: bookingId,
-                    status: "ATIVO",
+                    status: "ATIVO" as const,
                     updatedAt: new Date().toISOString(),
                 })
 
@@ -124,8 +122,7 @@ export async function POST(req: Request) {
 
                     if (googleEvent.id) {
                         // Update booking with Google Event ID
-                        await (supabaseAdmin
-                            .from('Booking') as any)
+                        await (supabaseAdmin.from('Booking') as any)
                             .update({ googleEventId: googleEvent.id })
                             .eq('id', bookingId)
                     }

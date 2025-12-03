@@ -28,8 +28,8 @@ export default function AgendaPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data: business } = await supabase
-                .from('Business')
+            const { data: business } = await (supabase
+                .from('Business') as any)
                 .select('id')
                 .eq('ownerId', user.id)
                 .single()
@@ -42,10 +42,10 @@ export default function AgendaPage() {
                 const endOfDay = new Date(selectedDate)
                 endOfDay.setHours(23, 59, 59, 999)
 
-                const { data } = await supabase
-                    .from('Booking')
+                const { data } = await (supabase
+                    .from('Booking') as any)
                     .select('*, servico:Servico(*)')
-                    .eq('businessId', business.id)
+                    .eq('businessId', (business as any).id)
                     .gte('dataHora', startOfDay.toISOString())
                     .lte('dataHora', endOfDay.toISOString())
                     .order('dataHora')

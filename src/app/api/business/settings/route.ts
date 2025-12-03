@@ -13,8 +13,8 @@ export async function POST(req: Request) {
         const body = await req.json()
         const { autoReplyEnabled, autoReplyConfig, endereco } = body
 
-        const { data: user } = await supabaseAdmin
-            .from('User')
+        const { data: user } = await (supabaseAdmin
+            .from('User') as any)
             .select('*, business:Business(*)')
             .eq('id', session.user.id as string)
             .single()
@@ -26,8 +26,8 @@ export async function POST(req: Request) {
         // Handle business being array or object
         const businessData = Array.isArray(user.business) ? user.business[0] : user.business
 
-        const { error: updateError } = await supabaseAdmin
-            .from('Business')
+        const { error: updateError } = await (supabaseAdmin
+            .from('Business') as any)
             .update({
                 autoReplyEnabled,
                 autoReplyConfig,

@@ -1,8 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Business, Servico } from "@prisma/client"
+import { Database } from "@/types/supabase"
 import { Button } from "@/components/ui/button"
+
+type Business = Database['public']['Tables']['Business']['Row']
+type Servico = Database['public']['Tables']['Servico']['Row']
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"

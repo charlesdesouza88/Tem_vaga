@@ -54,10 +54,9 @@ export async function POST(req: Request) {
         const createdBooking = createdBookingData as Booking
 
         // 4. Cancel old booking
-        const { error: cancelError } = await (supabaseAdmin
-            .from('Booking') as any)
+        const { error: cancelError } = await (supabaseAdmin.from('Booking') as any)
             .update(createBookingUpdate({
-                status: 'CANCELADO',
+                status: 'CANCELADO' as const,
                 cancellationReason: 'Reagendado pelo cliente',
                 cancelledAt: new Date().toISOString()
             }))

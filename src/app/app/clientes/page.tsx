@@ -27,8 +27,8 @@ export default function ClientsPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data: business } = await supabase
-                .from('Business')
+            const { data: business } = await (supabase
+                .from('Business') as any)
                 .select('id')
                 .eq('ownerId', user.id)
                 .single()
@@ -36,8 +36,8 @@ export default function ClientsPage() {
             if (business) {
                 // Fetch all bookings to aggregate clients
                 // Note: In a real app with many records, this should be a database view or RPC
-                const { data: bookings } = await supabase
-                    .from('Booking')
+                const { data: bookings } = await (supabase
+                    .from('Booking') as any)
                     .select('clienteNome, clienteWhats, dataHora')
                     .eq('businessId', business.id)
                     .order('dataHora', { ascending: false })
@@ -45,7 +45,7 @@ export default function ClientsPage() {
                 if (bookings) {
                     const clientMap = new Map<string, Client>()
 
-                    bookings.forEach(booking => {
+                    bookings.forEach((booking: any) => {
                         const key = booking.clienteWhats
                         if (!clientMap.has(key)) {
                             clientMap.set(key, {

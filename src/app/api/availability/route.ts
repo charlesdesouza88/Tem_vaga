@@ -38,15 +38,15 @@ export async function GET(req: Request) {
 
         // 2. Generate Potential Slots
         const dayOfWeek = new Date(dateStr).getDay() // 0=Sun
-        const horario = horarios?.find((h: any) => h.diaSemana === dayOfWeek)
+        const horario = (horarios as any)?.find((h: any) => h.diaSemana === dayOfWeek)
 
         if (!horario) {
             return NextResponse.json({ slots: [] }) // Closed
         }
 
         const potentialSlots: { start: Date, end: Date }[] = []
-        let currentMin = horario.inicioMin
-        const endMin = horario.fimMin
+        let currentMin = (horario as any).inicioMin
+        const endMin = (horario as any).fimMin
 
         while (currentMin + duration <= endMin) {
             const slotStart = new Date(dateStr)

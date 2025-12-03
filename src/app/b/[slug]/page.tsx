@@ -52,8 +52,9 @@ export default function BookingPage() {
 
     const fetchOldBooking = async () => {
         try {
-            const { data, error } = await supabase
-                .from('Booking')
+            if (!rescheduleId) return
+            const { data, error } = await (supabase
+                .from('Booking') as any)
                 .select('*, servico:Servico(*)')
                 .eq('id', rescheduleId)
                 .single()
@@ -77,8 +78,8 @@ export default function BookingPage() {
 
     const fetchBusinessData = async () => {
         try {
-            const { data: businessData } = await supabase
-                .from('Business')
+            const { data: businessData } = await (supabase
+                .from('Business') as any)
                 .select('*')
                 .eq('slug', slug)
                 .single()
@@ -86,10 +87,10 @@ export default function BookingPage() {
             if (businessData) {
                 setBusiness(businessData)
 
-                const { data: servicesData } = await supabase
-                    .from('Servico')
+                const { data: servicesData } = await (supabase
+                    .from('Servico') as any)
                     .select('*')
-                    .eq('businessId', businessData.id)
+                    .eq('businessId', (businessData as any).id)
                     .eq('ativo', true)
 
                 if (servicesData) setServices(servicesData)
@@ -106,10 +107,10 @@ export default function BookingPage() {
 
         // 1. Get working hours for the day
         const dayOfWeek = selectedDate.getDay()
-        const { data: hours } = await supabase
-            .from('HorarioAtendimento')
+        const { data: hours } = await (supabase
+            .from('HorarioAtendimento') as any)
             .select('*')
-            .eq('businessId', business.id)
+            .eq('businessId', (business as any).id)
             .eq('diaSemana', dayOfWeek)
             .eq('ativo', true)
             .single()
@@ -125,19 +126,19 @@ export default function BookingPage() {
         const endOfDay = new Date(selectedDate)
         endOfDay.setHours(23, 59, 59, 999)
 
-        const { data: bookings } = await supabase
-            .from('Booking')
+        const { data: bookings } = await (supabase
+            .from('Booking') as any)
             .select('dataHora')
-            .eq('businessId', business.id)
+            .eq('businessId', (business as any).id)
             .gte('dataHora', startOfDay.toISOString())
             .lte('dataHora', endOfDay.toISOString())
             .neq('status', 'CANCELADO')
 
         // 3. Generate slots
         const slots: string[] = []
-        let currentMin = hours.inicioMin
-        const endMin = hours.fimMin
-        const duration = selectedService.duracaoMin
+        let currentMin = (hours as any).inicioMin
+        const endMin = (hours as any).fimMin
+        const duration = (selectedService as any).duracaoMin
 
         while (currentMin + duration <= endMin) {
             const h = Math.floor(currentMin / 60)
@@ -148,7 +149,7 @@ export default function BookingPage() {
             const slotDate = new Date(selectedDate)
             slotDate.setHours(h, m, 0, 0)
 
-            const isBusy = bookings?.some(b => {
+            const isBusy = bookings?.some((b: any) => {
                 const bookingTime = parseISO(b.dataHora)
                 // Simple collision check: if booking starts at same time
                 // In a real app, check full overlap

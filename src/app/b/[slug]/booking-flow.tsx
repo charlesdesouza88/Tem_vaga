@@ -1,10 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Business, Servico, HorarioAtendimento } from "@prisma/client"
+import { Database } from "@/types/supabase"
 import { format, setHours, setMinutes } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Check, ChevronRight, ChevronLeft, Clock, MapPin } from "lucide-react"
+
+type Business = Database['public']['Tables']['Business']['Row']
+type Servico = Database['public']['Tables']['Servico']['Row']
+type HorarioAtendimento = Database['public']['Tables']['HorarioAtendimento']['Row']
 
 type BookingFlowProps = {
     business: Business & {

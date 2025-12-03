@@ -11,8 +11,8 @@ export default async function AtendimentoPage() {
         redirect("/auth/login")
     }
 
-    const { data: user } = await supabaseAdmin
-        .from('User')
+    const { data: user } = await (supabaseAdmin
+        .from('User') as any)
         .select('*, business:Business(*)')
         .eq('id', session.user.id as string)
         .single()

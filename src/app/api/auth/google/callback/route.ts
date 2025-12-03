@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { google } from "googleapis"
-import { supabaseAdmin } from "@/lib/supabase-admin"
+import { supabaseAdmin } from "@/lib/supabase"
 import { Database } from "@/types/supabase"
 
 type BusinessUpdate = Database['public']['Tables']['Business']['Update']
@@ -46,16 +46,15 @@ export async function GET(req: Request) {
         console.log("Has refresh token:", !!tokens.refresh_token)
         console.log("Has access token:", !!tokens.access_token)
 
-        const payload: BusinessUpdate = {
+        // Update Business with tokens
+        const updatePayload: BusinessUpdate = {
             googleAccessToken: tokens.access_token ?? null,
             googleRefreshToken: tokens.refresh_token ?? null,
-            googleTokenExpiry: tokens.expiry_date ?? null,
+            googleTokenExpiry: tokens.expiry_date ? Number(tokens.expiry_date) : null,
         }
-
-        // Update Business with tokens
-        const { error, data } = await (supabaseAdmin
-            .from('Business') as any)
-            .update(payload)
+        
+        const { error, data } = await (supabaseAdmin.from('Business') as any)
+            .update(updatePayload)
             .eq('id', business.id)
             .select()
 

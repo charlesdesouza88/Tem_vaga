@@ -34,6 +34,7 @@ export interface Database {
                     createdAt?: string
                     updatedAt?: string
                 }
+                Relationships: []
             }
             Business: {
                 Row: {
@@ -93,6 +94,7 @@ export interface Database {
                     createdAt?: string
                     updatedAt?: string
                 }
+                Relationships: []
             }
             Servico: {
                 Row: {
@@ -122,6 +124,7 @@ export interface Database {
                     duracaoMin?: number
                     ativo?: boolean
                 }
+                Relationships: []
             }
             HorarioAtendimento: {
                 Row: {
@@ -148,6 +151,7 @@ export interface Database {
                     fimMin?: number
                     ativo?: boolean
                 }
+                Relationships: []
             }
             Booking: {
                 Row: {
@@ -160,6 +164,7 @@ export interface Database {
                     status: 'AGENDADO' | 'CANCELADO' | 'CONCLUIDO'
                     cancellationReason: string | null
                     cancelledAt: string | null
+                    googleEventId: string | null
                     createdAt: string
                     updatedAt: string
                 }
@@ -173,6 +178,7 @@ export interface Database {
                     status?: 'AGENDADO' | 'CANCELADO' | 'CONCLUIDO'
                     cancellationReason?: string | null
                     cancelledAt?: string | null
+                    googleEventId?: string | null
                     createdAt?: string
                     updatedAt?: string
                 }
@@ -186,9 +192,11 @@ export interface Database {
                     status?: 'AGENDADO' | 'CANCELADO' | 'CONCLUIDO'
                     cancellationReason?: string | null
                     cancelledAt?: string | null
+                    googleEventId?: string | null
                     createdAt?: string
                     updatedAt?: string
                 }
+                Relationships: []
             }
             WaitlistEntry: {
                 Row: {
@@ -227,6 +235,7 @@ export interface Database {
                     updatedAt?: string
                     bookingId?: string | null
                 }
+                Relationships: []
             }
         }
         Views: {

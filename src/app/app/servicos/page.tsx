@@ -30,17 +30,17 @@ export default function ServicesPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data: business } = await supabase
-                .from('Business')
+            const { data: business } = await (supabase
+                .from('Business') as any)
                 .select('id')
                 .eq('ownerId', user.id)
                 .single()
 
             if (business) {
-                const { data } = await supabase
-                    .from('Servico')
+                const { data } = await (supabase
+                    .from('Servico') as any)
                     .select('*')
-                    .eq('businessId', business.id)
+                    .eq('businessId', (business as any).id)
                     .order('nome')
 
                 if (data) setServices(data)
@@ -60,8 +60,8 @@ export default function ServicesPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data: business } = await supabase
-                .from('Business')
+            const { data: business } = await (supabase
+                .from('Business') as any)
                 .select('id')
                 .eq('ownerId', user.id)
                 .single()
@@ -77,13 +77,13 @@ export default function ServicesPage() {
             }
 
             if (editingService) {
-                await supabase
-                    .from('Servico')
+                await (supabase
+                    .from('Servico') as any)
                     .update(serviceData)
                     .eq('id', editingService.id)
             } else {
-                await supabase
-                    .from('Servico')
+                await (supabase
+                    .from('Servico') as any)
                     .insert(serviceData)
             }
 
@@ -103,7 +103,7 @@ export default function ServicesPage() {
         if (!confirm("Tem certeza que deseja excluir este serviço?")) return
 
         try {
-            await supabase.from('Servico').delete().eq('id', id)
+            await (supabase.from('Servico') as any).delete().eq('id', id)
             fetchServices()
         } catch (error) {
             console.error("Error deleting service:", error)

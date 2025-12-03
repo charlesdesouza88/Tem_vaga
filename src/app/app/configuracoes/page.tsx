@@ -28,8 +28,8 @@ export default function SettingsPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data } = await supabase
-                .from('Business')
+            const { data } = await (supabase
+                .from('Business') as any)
                 .select('*')
                 .eq('ownerId', user.id)
                 .single()
@@ -54,8 +54,8 @@ export default function SettingsPage() {
         e.preventDefault()
         setIsSaving(true)
         try {
-            const { error } = await supabase
-                .from('Business')
+            const { error } = await (supabase
+                .from('Business') as any)
                 .update({
                     nome: formData.nome,
                     telefoneWhats: formData.telefoneWhats,
