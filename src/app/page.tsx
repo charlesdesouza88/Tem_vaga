@@ -10,7 +10,7 @@ export default function LandingPage() {
                     <nav className="flex items-center gap-4">
                         <Link
                             href="/auth/login"
-                            className="text-sm font-medium text-neutral-700 hover:text-primary-600 transition-colors"
+                            className="text-sm font-bold text-neutral-800 hover:text-primary-700 transition-colors px-3 py-2 rounded-lg hover:bg-neutral-100"
                         >
                             Entrar
                         </Link>
@@ -37,16 +37,16 @@ export default function LandingPage() {
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
                         <Link
-                            href="/auth/login"
+                            href="/auth/register"
                             className="w-full sm:w-auto px-8 py-4 bg-primary-700 text-white rounded-xl font-bold text-lg hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95 text-center"
                         >
-                            Entrar no App
+                            Criar conta grátis
                         </Link>
                         <Link
-                            href="/auth/register"
-                            className="w-full sm:w-auto px-8 py-4 bg-white text-neutral-800 border-2 border-neutral-400 rounded-xl font-bold text-lg hover:bg-neutral-50 hover:border-primary-600 hover:text-primary-700 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 text-center"
+                            href="/auth/login"
+                            className="w-full sm:w-auto px-8 py-4 bg-neutral-800 text-white border-2 border-neutral-800 rounded-xl font-bold text-lg hover:bg-neutral-900 hover:border-neutral-900 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neutral-400 text-center"
                         >
-                            Criar conta grátis
+                            Entrar no App
                         </Link>
                     </div>
 
