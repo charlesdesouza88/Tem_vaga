@@ -39,8 +39,8 @@ export default function OnboardingPage() {
             if (!user) throw new Error("No user found")
 
             // 1. Create Business
-            const { data: business, error: businessError } = await supabase
-                .from('Business')
+            const { data: business, error: businessError } = await (supabase
+                .from('Business') as any)
                 .insert({
                     ownerId: user.id,
                     nome: formData.businessName,
@@ -54,8 +54,8 @@ export default function OnboardingPage() {
             if (businessError) throw businessError
 
             // 2. Create Default Service
-            await supabase.from('Servico').insert({
-                businessId: business.id,
+            await (supabase.from('Servico') as any).insert({
+                businessId: (business as any).id,
                 nome: "Atendimento Padrão",
                 preco: 10000, // R$ 100,00
                 duracaoMin: 60,
@@ -64,13 +64,13 @@ export default function OnboardingPage() {
 
             // 3. Create Default Hours (Mon-Fri, 9-18)
             const hours = [1, 2, 3, 4, 5].map(day => ({
-                businessId: business.id,
+                businessId: (business as any).id,
                 diaSemana: day,
                 inicioMin: 9 * 60, // 09:00
                 fimMin: 18 * 60,   // 18:00
                 ativo: true
             }))
-            await supabase.from('HorarioAtendimento').insert(hours)
+            await (supabase.from('HorarioAtendimento') as any).insert(hours)
 
             router.push('/app/agenda')
         } catch (error) {

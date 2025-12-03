@@ -69,7 +69,7 @@ export default function ServicesPage() {
             if (!business) return
 
             const serviceData = {
-                businessId: business.id,
+                businessId: (business as any).id,
                 nome: formData.nome,
                 preco: Math.round(parseFloat(formData.preco.replace(',', '.')) * 100), // Convert to cents
                 duracaoMin: parseInt(formData.duracaoMin),

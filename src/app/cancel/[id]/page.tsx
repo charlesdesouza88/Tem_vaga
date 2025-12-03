@@ -20,8 +20,8 @@ export default function CancellationPage() {
 
     const fetchBooking = async () => {
         try {
-            const { data, error } = await supabase
-                .from('Booking')
+            const { data, error } = await (supabase
+                .from('Booking') as any)
                 .select('*, servico:Servico(*), business:Business(*)')
                 .eq('id', bookingId)
                 .single()
@@ -40,8 +40,8 @@ export default function CancellationPage() {
         setStatus('loading')
         try {
             // 1. Update booking status
-            const { error } = await supabase
-                .from('Booking')
+            const { error } = await (supabase
+                .from('Booking') as any)
                 .update({
                     status: 'CANCELADO' as const,
                     cancelledAt: new Date().toISOString(),
@@ -73,8 +73,8 @@ export default function CancellationPage() {
         const endOfDay = new Date(bookingDate)
         endOfDay.setHours(23, 59, 59, 999)
 
-        const { data: waitlist } = await supabase
-            .from('WaitlistEntry')
+        const { data: waitlist } = await (supabase
+            .from('WaitlistEntry') as any)
             .select('*')
             .eq('businessId', booking.businessId)
             .eq('status', 'ATIVO')
@@ -88,8 +88,8 @@ export default function CancellationPage() {
             console.log(`[WAITLIST] Notifying ${waitlist.clienteNome} (${waitlist.clienteWhats}) about free slot at ${booking.dataHora}`)
 
             // Update waitlist status
-            await supabase
-                .from('WaitlistEntry')
+            await (supabase
+                .from('WaitlistEntry') as any)
                 .update({ status: 'OFERECIDO' as const })
                 .eq('id', waitlist.id)
 

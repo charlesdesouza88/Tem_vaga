@@ -195,15 +195,15 @@ export default function BookingPage() {
                 if (!response.ok) throw new Error("Falha ao reagendar")
             } else {
                 // Handle New Booking
-                const { error } = await supabase
-                    .from('Booking')
+                const { error } = await (supabase
+                    .from('Booking') as any)
                     .insert({
-                        businessId: business.id,
-                        servicoId: selectedService.id,
+                        businessId: (business as any).id,
+                        servicoId: (selectedService as any).id,
                         clienteNome: clientData.name,
                         clienteWhats: clientData.whatsapp,
                         dataHora: bookingDate.toISOString(),
-                        status: 'AGENDADO'
+                        status: 'AGENDADO' as const
                     })
 
                 if (error) throw error

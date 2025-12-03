@@ -51,7 +51,7 @@ export default function HoursPage() {
                     const fullWeek = DAYS.map(day => {
                         const existing = data.find((h: any) => h.diaSemana === day.id)
                         return existing || {
-                            businessId: business.id,
+                            businessId: (business as any).id,
                             diaSemana: day.id,
                             inicioMin: 9 * 60,
                             fimMin: 18 * 60,
