@@ -16,7 +16,7 @@ export default function LandingPage() {
                         </Link>
                         <Link
                             href="/auth/register"
-                            className="text-sm font-semibold bg-primary-600 text-white px-5 py-2.5 rounded-xl hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+                            className="text-sm font-bold bg-primary-700 text-white px-5 py-2.5 rounded-xl hover:bg-primary-800 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95"
                         >
                             Criar conta
                         </Link>
@@ -38,13 +38,13 @@ export default function LandingPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
                         <Link
                             href="/auth/login"
-                            className="w-full sm:w-auto px-8 py-4 bg-primary-600 text-white rounded-xl font-bold text-lg hover:bg-primary-700 transition-all shadow-lg hover:shadow-xl"
+                            className="w-full sm:w-auto px-8 py-4 bg-primary-700 text-white rounded-xl font-bold text-lg hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95 text-center"
                         >
                             Entrar no App
                         </Link>
                         <Link
                             href="/auth/register"
-                            className="w-full sm:w-auto px-8 py-4 bg-white text-neutral-700 border-2 border-neutral-300 rounded-xl font-bold text-lg hover:bg-neutral-50 hover:border-neutral-400 transition-all"
+                            className="w-full sm:w-auto px-8 py-4 bg-white text-neutral-800 border-2 border-neutral-400 rounded-xl font-bold text-lg hover:bg-neutral-50 hover:border-primary-600 hover:text-primary-700 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 text-center"
                         >
                             Criar conta grátis
                         </Link>

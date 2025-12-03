@@ -17,8 +17,8 @@ export function ClayInput({ className, label, error, id, ...props }: ClayInputPr
             <input
                 id={id}
                 className={cn(
-                    "w-full px-4 py-3 bg-neutral-50 rounded-clay-md border-none shadow-clay-inset focus:ring-2 focus:ring-primary-300 focus:outline-none transition-all placeholder:text-neutral-400",
-                    error && "ring-2 ring-red-300 bg-red-50",
+                    "w-full px-4 py-3 bg-white border-2 border-neutral-300 rounded-xl focus:border-primary-600 focus:ring-4 focus:ring-primary-300 focus:outline-none transition-all placeholder:text-neutral-400 text-neutral-900",
+                    error && "border-red-400 ring-4 ring-red-200 bg-red-50",
                     className
                 )}
                 {...props}

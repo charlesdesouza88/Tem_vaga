@@ -40,10 +40,10 @@ export default function AgendaClient({ bookings }: { bookings: BookingWithServic
     return (
         <div className="space-y-4">
             {bookings.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-neutral-300">
-                    <Calendar className="mx-auto mb-4 text-neutral-400" size={48} />
-                    <p className="text-neutral-600 font-medium">Nenhum agendamento para hoje</p>
-                    <p className="text-neutral-500 text-sm mt-1">Novos agendamentos aparecerão aqui</p>
+                <div className="text-center py-16 bg-gradient-to-br from-neutral-50 to-white rounded-2xl border-2 border-neutral-200 shadow-sm">
+                    <Calendar className="mx-auto mb-4 text-neutral-500" size={64} strokeWidth={1.5} />
+                    <p className="text-neutral-800 font-semibold text-lg">Nenhum agendamento para hoje</p>
+                    <p className="text-neutral-600 text-sm mt-2">Novos agendamentos aparecerão aqui automaticamente</p>
                 </div>
             ) : (
                 bookings.map((booking) => (
@@ -78,14 +78,14 @@ export default function AgendaClient({ bookings }: { bookings: BookingWithServic
                                 <div className="flex items-center gap-2 self-end sm:self-center">
                                     <button
                                         onClick={() => handleRemind(booking)}
-                                        className="px-4 py-2 bg-primary-50 text-primary-700 font-medium text-sm rounded-xl hover:bg-primary-100 border-2 border-primary-200 transition-colors"
+                                        className="px-4 py-2 bg-primary-600 text-white font-semibold text-sm rounded-xl hover:bg-primary-700 shadow-md hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95"
                                     >
                                         Lembrete
                                     </button>
                                     <button
                                         onClick={() => handleCancel(booking.id)}
                                         disabled={loadingId === booking.id}
-                                        className="px-4 py-2 bg-white text-red-600 font-medium text-sm rounded-xl hover:bg-red-50 border-2 border-red-200 transition-colors disabled:opacity-50"
+                                        className="px-4 py-2 bg-red-600 text-white font-semibold text-sm rounded-xl hover:bg-red-700 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-300 active:scale-95"
                                     >
                                         {loadingId === booking.id ? "..." : "Cancelar"}
                                     </button>
@@ -102,20 +102,20 @@ export default function AgendaClient({ bookings }: { bookings: BookingWithServic
 function StatusBadge({ status }: { status: string }) {
     if (status === "AGENDADO") {
         return (
-            <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+            <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-green-600 text-white shadow-sm">
                 Confirmado
             </span>
         )
     }
     if (status === "CANCELADO") {
         return (
-            <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+            <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-red-600 text-white shadow-sm">
                 Cancelado
             </span>
         )
     }
     return (
-        <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-neutral-100 text-neutral-700 border border-neutral-200">
+        <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-neutral-600 text-white shadow-sm">
             {status}
         </span>
     )

@@ -144,13 +144,13 @@ export default function ServicesPage() {
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                             <button
                                 onClick={() => openEdit(service)}
-                                className="p-2 bg-white rounded-full shadow-sm hover:text-primary-600 transition-colors"
+                                className="p-2 bg-primary-600 text-white rounded-full shadow-md hover:bg-primary-700 hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300"
                             >
                                 <Edit2 size={16} />
                             </button>
                             <button
                                 onClick={() => handleDelete(service.id)}
-                                className="p-2 bg-white rounded-full shadow-sm hover:text-red-600 transition-colors"
+                                className="p-2 bg-red-600 text-white rounded-full shadow-md hover:bg-red-700 hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-300"
                             >
                                 <Trash2 size={16} />
                             </button>

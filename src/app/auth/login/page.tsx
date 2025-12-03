@@ -71,7 +71,7 @@ export default function LoginPage() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all"
+                                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-xl focus:outline-none focus:border-primary-600 focus:ring-4 focus:ring-primary-300 transition-all"
                                 placeholder="seu@email.com"
                                 required
                             />
@@ -85,7 +85,7 @@ export default function LoginPage() {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all"
+                                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-xl focus:outline-none focus:border-primary-600 focus:ring-4 focus:ring-primary-300 transition-all"
                                 placeholder="••••••••"
                                 required
                             />
@@ -94,7 +94,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-primary-600 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                            className="w-full bg-primary-700 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95"
                         >
                             {loading ? (
                                 "Entrando..."

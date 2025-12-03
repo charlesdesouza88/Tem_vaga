@@ -274,21 +274,21 @@ export default function BookingPage() {
                                             setSelectedService(service)
                                             setStep(2)
                                         }}
-                                        className={`w-full text-left p-4 rounded-clay-md transition-all border group
+                                        className={`w-full text-left p-4 rounded-xl transition-all border-2 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300
                                             ${selectedService?.id === service.id
-                                                ? 'bg-primary-50 border-primary-200 shadow-inner'
-                                                : 'bg-neutral-50 hover:bg-white hover:shadow-clay-sm border-transparent hover:border-primary-200'
+                                                ? 'bg-primary-600 border-primary-600 shadow-lg'
+                                                : 'bg-white hover:bg-neutral-50 hover:shadow-md border-neutral-200 hover:border-primary-400'
                                             }`}
                                     >
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className={`font-bold ${selectedService?.id === service.id ? 'text-primary-700' : 'text-neutral-800 group-hover:text-primary-700'}`}>
+                                            <span className={`font-bold ${selectedService?.id === service.id ? 'text-white' : 'text-neutral-800 group-hover:text-primary-700'}`}>
                                                 {service.nome}
                                             </span>
-                                            <span className="font-bold text-primary-600">
+                                            <span className={`font-bold ${selectedService?.id === service.id ? 'text-white' : 'text-primary-600'}`}>
                                                 {(service.preco / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-1 text-xs text-neutral-500">
+                                        <div className={`flex items-center gap-1 text-xs ${selectedService?.id === service.id ? 'text-white/90' : 'text-neutral-500'}`}>
                                             <Clock size={12} />
                                             {service.duracaoMin} min
                                         </div>
@@ -301,8 +301,8 @@ export default function BookingPage() {
                         {step === 2 && (
                             <div className="space-y-6 animate-in slide-in-from-right-4">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <button onClick={() => setStep(1)} className="p-1 hover:bg-neutral-100 rounded-full">
-                                        <ChevronLeft size={20} />
+                                    <button onClick={() => setStep(1)} className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300">
+                                        <ChevronLeft size={20} className="text-neutral-700" />
                                     </button>
                                     <h2 className="text-lg font-bold text-neutral-800">Data e Horário</h2>
                                 </div>
@@ -319,10 +319,10 @@ export default function BookingPage() {
                                                     setSelectedDate(date)
                                                     setSelectedTime(null)
                                                 }}
-                                                className={`flex-shrink-0 w-16 h-20 rounded-clay-md flex flex-col items-center justify-center gap-1 transition-all
+                                                className={`flex-shrink-0 w-16 h-20 rounded-xl flex flex-col items-center justify-center gap-1 transition-all font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300
                                                     ${isSelected
-                                                        ? 'bg-primary-500 text-white shadow-clay-md'
-                                                        : 'bg-neutral-50 text-neutral-600 hover:bg-white hover:shadow-clay-sm'
+                                                        ? 'bg-primary-700 text-white shadow-lg scale-105'
+                                                        : 'bg-white text-neutral-700 hover:bg-neutral-50 hover:shadow-md border-2 border-neutral-200 hover:border-primary-400'
                                                     }`}
                                             >
                                                 <span className="text-xs font-medium uppercase">{format(date, 'EEE', { locale: ptBR })}</span>
@@ -343,10 +343,10 @@ export default function BookingPage() {
                                                         setSelectedTime(time)
                                                         setStep(3)
                                                     }}
-                                                    className={`py-2 px-4 rounded-clay-sm font-medium transition-all text-sm
+                                                    className={`py-3 px-4 rounded-xl font-semibold transition-all text-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300
                                                         ${selectedTime === time
-                                                            ? 'bg-primary-600 text-white shadow-clay-sm'
-                                                            : 'bg-white border border-neutral-200 text-neutral-700 hover:border-primary-300 hover:text-primary-600'
+                                                            ? 'bg-primary-700 text-white shadow-lg scale-105'
+                                                            : 'bg-white border-2 border-neutral-200 text-neutral-700 hover:border-primary-500 hover:bg-primary-50 hover:text-primary-700 hover:shadow-md'
                                                         }`}
                                                 >
                                                     {time}
@@ -366,8 +366,8 @@ export default function BookingPage() {
                         {step === 3 && (
                             <div className="space-y-6 animate-in slide-in-from-right-4">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <button onClick={() => setStep(2)} className="p-1 hover:bg-neutral-100 rounded-full">
-                                        <ChevronLeft size={20} />
+                                    <button onClick={() => setStep(2)} className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300">
+                                        <ChevronLeft size={20} className="text-neutral-700" />
                                     </button>
                                     <h2 className="text-lg font-bold text-neutral-800">Seus Dados</h2>
                                 </div>
