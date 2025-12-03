@@ -13,8 +13,8 @@ async function test() {
     }
 
     // This matches the route code exactly
-    await supabaseAdmin
-        .from('Business')
+    await (supabaseAdmin
+        .from('Business') as any)
         .update(payload)
         .eq('id', '1')
 }

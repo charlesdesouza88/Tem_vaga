@@ -14,8 +14,8 @@ export async function GET(req: Request) {
     else if (mode === 'all' || !mode) selectQuery = '*, servicos:Servico(*), horarios:HorarioAtendimento(*)'
 
     try {
-        const { data, error } = await supabaseAdmin
-            .from('Business')
+        const { data, error } = await (supabaseAdmin
+            .from('Business') as any)
             .select(selectQuery)
             .eq('slug', slug)
             .single()

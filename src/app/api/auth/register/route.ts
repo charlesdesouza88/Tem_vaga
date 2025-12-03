@@ -60,8 +60,8 @@ export async function POST(req: Request) {
         const { email, password, name } = validationResult.data
 
         // Check if user exists
-        const { data: existingUser } = await supabase
-            .from('User')
+        const { data: existingUser } = await (supabase
+            .from('User') as any)
             .select('id')
             .eq('email', email)
             .single()

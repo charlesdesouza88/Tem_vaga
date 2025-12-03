@@ -19,8 +19,8 @@ export async function offerSlotToWaitlist(businessId: string, cancelledBooking: 
     const endOfDay = new Date(cancelledBooking.dataHora)
     endOfDay.setHours(23, 59, 59, 999)
 
-    const { data, error } = await supabaseAdmin
-        .from('WaitlistEntry')
+    const { data, error } = await (supabaseAdmin
+        .from('WaitlistEntry') as any)
         .select('*, business:Business(*)')
         .eq('businessId', businessId)
         .eq('status', 'ATIVO')

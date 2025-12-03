@@ -23,8 +23,8 @@ export const authOptions: NextAuthOptions = {
                     return null
                 }
 
-                const { data: user, error } = await supabase
-                    .from('User')
+                const { data: user, error } = await (supabase
+                    .from('User') as any)
                     .select('*')
                     .eq('email', credentials.email)
                     .single()
