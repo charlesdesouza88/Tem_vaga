@@ -53,33 +53,33 @@ export default function LandingPage() {
                     {/* Features Grid */}
                     <div className="grid md:grid-cols-3 gap-6 mt-16">
                         <div className="bg-white p-8 rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all">
-                            <div className="w-14 h-14 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            <div className="w-14 h-14 bg-primary-600 text-white rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-neutral-900 mb-2">Agenda Online</h3>
-                            <p className="text-neutral-600">Seus clientes agendam direto pelo link, sem precisar ligar</p>
+                            <p className="text-neutral-700">Seus clientes agendam direto pelo link, sem precisar ligar</p>
                         </div>
 
                         <div className="bg-white p-8 rounded-2xl border-2 border-neutral-200 hover:border-accent-300 hover:shadow-lg transition-all">
-                            <div className="w-14 h-14 bg-accent-100 text-accent-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            <div className="w-14 h-14 bg-accent-600 text-white rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-neutral-900 mb-2">WhatsApp Bot</h3>
-                            <p className="text-neutral-600">Respostas automáticas para dúvidas frequentes dos clientes</p>
+                            <p className="text-neutral-700">Respostas automáticas para dúvidas frequentes dos clientes</p>
                         </div>
 
                         <div className="bg-white p-8 rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all">
-                            <div className="w-14 h-14 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <div className="w-14 h-14 bg-primary-600 text-white rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-neutral-900 mb-2">Google Calendar</h3>
-                            <p className="text-neutral-600">Sincronização automática com sua agenda do Google</p>
+                            <p className="text-neutral-700">Sincronização automática com sua agenda do Google</p>
                         </div>
                     </div>
                 </div>
