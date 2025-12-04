@@ -16,7 +16,7 @@ export default function LandingPage() {
                         </Link>
                         <Link
                             href="/auth/register"
-                            className="text-sm font-bold bg-primary-700 text-white px-5 py-2.5 rounded-xl hover:bg-primary-800 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95"
+                            className="text-sm font-bold bg-primary-700 text-black px-5 py-2.5 rounded-xl hover:bg-primary-800 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95"
                         >
                             Criar conta
                         </Link>
@@ -38,7 +38,7 @@ export default function LandingPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-16">
                         <Link
                             href="/auth/register"
-                            className="w-full sm:w-auto px-8 py-4 bg-primary-700 text-white rounded-xl font-bold text-lg hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95 text-center"
+                            className="w-full sm:w-auto px-8 py-4 bg-primary-700 text-black rounded-xl font-bold text-lg hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95 text-center"
                         >
                             Criar conta grátis
                         </Link>
@@ -53,7 +53,7 @@ export default function LandingPage() {
                     {/* Features Grid */}
                     <div className="grid md:grid-cols-3 gap-6 mt-16">
                         <div className="bg-white p-8 rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all">
-                            <div className="w-14 h-14 bg-primary-600 text-white rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+                            <div className="w-14 h-14 bg-primary-700 text-black rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -63,7 +63,7 @@ export default function LandingPage() {
                         </div>
 
                         <div className="bg-white p-8 rounded-2xl border-2 border-neutral-200 hover:border-accent-300 hover:shadow-lg transition-all">
-                            <div className="w-14 h-14 bg-accent-600 text-white rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+                            <div className="w-14 h-14 bg-accent-700 text-black rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                                 </svg>
@@ -73,7 +73,7 @@ export default function LandingPage() {
                         </div>
 
                         <div className="bg-white p-8 rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all">
-                            <div className="w-14 h-14 bg-primary-600 text-white rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+                            <div className="w-14 h-14 bg-primary-700 text-black rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
