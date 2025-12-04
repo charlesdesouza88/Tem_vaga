@@ -46,14 +46,14 @@ export default function LoginPage() {
                     <Link href="/" className="inline-block">
                         <h1 className="text-4xl font-bold text-primary-600 mb-2">Tem_vaga</h1>
                     </Link>
-                    <p className="text-neutral-600">Gerencie seus agendamentos com facilidade</p>
+                    <p className="text-neutral-700">Gerencie seus agendamentos com facilidade</p>
                 </div>
 
                 {/* Login Card */}
                 <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-neutral-200">
                     <div className="mb-6">
                         <h2 className="text-2xl font-bold text-neutral-900">Bem-vindo de volta</h2>
-                        <p className="text-neutral-600 mt-1">Entre na sua conta para continuar</p>
+                        <p className="text-neutral-700 mt-1">Entre na sua conta para continuar</p>
                     </div>
 
                     {error && (
@@ -119,7 +119,7 @@ export default function LoginPage() {
 
                 {/* Back to home */}
                 <div className="text-center mt-6">
-                    <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-700 transition-colors">
+                    <Link href="/" className="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">
                         ← Voltar para o início
                     </Link>
                 </div>

@@ -10,7 +10,7 @@ export default function LandingPage() {
                     <nav className="flex items-center gap-4">
                         <Link
                             href="/auth/login"
-                            className="text-sm font-bold text-neutral-800 hover:text-primary-700 transition-colors px-3 py-2 rounded-lg hover:bg-neutral-100"
+                            className="text-sm font-bold text-neutral-800 hover:text-primary-700 transition-colors px-4 py-2 rounded-xl hover:bg-neutral-100"
                         >
                             Entrar
                         </Link>
@@ -35,7 +35,7 @@ export default function LandingPage() {
                     </p>
 
                     {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-16">
                         <Link
                             href="/auth/register"
                             className="w-full sm:w-auto px-8 py-4 bg-primary-700 text-white rounded-xl font-bold text-lg hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95 text-center"
@@ -44,7 +44,7 @@ export default function LandingPage() {
                         </Link>
                         <Link
                             href="/auth/login"
-                            className="w-full sm:w-auto px-8 py-4 bg-neutral-800 text-white border-2 border-neutral-800 rounded-xl font-bold text-lg hover:bg-neutral-900 hover:border-neutral-900 transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neutral-400 text-center"
+                            className="w-full sm:w-auto px-8 py-4 bg-neutral-800 text-white rounded-xl font-bold text-lg hover:bg-neutral-900 transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neutral-400 active:scale-95 text-center"
                         >
                             Entrar no App
                         </Link>
