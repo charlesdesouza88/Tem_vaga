@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { ClayCard } from "@/components/ui/clay-card"
 import { ClayButton } from "@/components/ui/clay-button"
 import { ClayInput } from "@/components/ui/clay-input"
-import { supabase } from "@/lib/supabase"
 import { Copy, Check, MessageSquare, Calendar } from "lucide-react"
 
 export default function SettingsPage() {
@@ -25,23 +24,18 @@ export default function SettingsPage() {
 
     const fetchSettings = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { data } = await (supabase
-                .from('Business') as any)
-                .select('*')
-                .eq('ownerId', user.id)
-                .single()
-
-            if (data) {
-                setBusiness(data)
-                setFormData({
-                    nome: data.nome,
-                    telefoneWhats: data.telefoneWhats,
-                    slug: data.slug,
-                    autoReplyEnabled: data.autoReplyEnabled
-                })
+            const response = await fetch('/api/business/settings')
+            if (response.ok) {
+                const data = await response.json()
+                if (data.business) {
+                    setBusiness(data.business)
+                    setFormData({
+                        nome: data.business.nome,
+                        telefoneWhats: data.business.telefoneWhats,
+                        slug: data.business.slug,
+                        autoReplyEnabled: data.business.autoReplyEnabled
+                    })
+                }
             }
         } catch (error) {
             console.error("Error fetching settings:", error)
@@ -54,16 +48,17 @@ export default function SettingsPage() {
         e.preventDefault()
         setIsSaving(true)
         try {
-            const { error } = await (supabase
-                .from('Business') as any)
-                .update({
+            const response = await fetch('/api/business/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     nome: formData.nome,
                     telefoneWhats: formData.telefoneWhats,
                     autoReplyEnabled: formData.autoReplyEnabled
                 })
-                .eq('id', business.id)
+            })
 
-            if (error) throw error
+            if (!response.ok) throw new Error('Failed to save')
             alert("Configurações salvas com sucesso!")
         } catch (error) {
             console.error("Error saving settings:", error)

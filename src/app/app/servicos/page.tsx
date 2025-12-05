@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { ClayCard } from "@/components/ui/clay-card"
 import { ClayButton } from "@/components/ui/clay-button"
 import { ClayInput } from "@/components/ui/clay-input"
-import { supabase } from "@/lib/supabase"
 import { Database } from "@/types/supabase"
 import { Plus, Trash2, Edit2, Clock, DollarSign } from "lucide-react"
 

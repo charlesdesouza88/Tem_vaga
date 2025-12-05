@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { ClayCard } from "@/components/ui/clay-card"
-import { supabase } from "@/lib/supabase"
 import { User, Phone, Calendar } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"

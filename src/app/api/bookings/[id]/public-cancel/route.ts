@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabase-admin"
 import { NextResponse } from "next/server"
 import { offerSlotToWaitlist } from "@/lib/waitlist"
 import { sendCancellationNotification } from "@/lib/whatsapp"

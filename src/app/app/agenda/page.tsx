@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { ClayCard } from "@/components/ui/clay-card"
 import { ClayButton } from "@/components/ui/clay-button"
-import { supabase } from "@/lib/supabase"
 import { Database } from "@/types/supabase"
 import { format, addDays, subDays, isSameDay, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -25,32 +24,10 @@ export default function AgendaPage() {
     const fetchBookings = async () => {
         setIsLoading(true)
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { data: business } = await (supabase
-                .from('Business') as any)
-                .select('id')
-                .eq('ownerId', user.id)
-                .single()
-
-            if (business) {
-                // Fetch bookings for the selected date range (entire day)
-                const startOfDay = new Date(selectedDate)
-                startOfDay.setHours(0, 0, 0, 0)
-
-                const endOfDay = new Date(selectedDate)
-                endOfDay.setHours(23, 59, 59, 999)
-
-                const { data } = await (supabase
-                    .from('Booking') as any)
-                    .select('*, servico:Servico(*)')
-                    .eq('businessId', (business as any).id)
-                    .gte('dataHora', startOfDay.toISOString())
-                    .lte('dataHora', endOfDay.toISOString())
-                    .order('dataHora')
-
-                if (data) setBookings(data as any)
+            const response = await fetch(`/api/bookings?date=${selectedDate.toISOString()}`)
+            if (response.ok) {
+                const data = await response.json()
+                setBookings(data.bookings || [])
             }
         } catch (error) {
             console.error("Error fetching bookings:", error)

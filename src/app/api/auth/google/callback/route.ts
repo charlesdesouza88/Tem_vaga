@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { google } from "googleapis"
-import { supabaseAdmin } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabase-admin"
 import { Database } from "@/types/supabase"
 
 type BusinessUpdate = Database['public']['Tables']['Business']['Update']

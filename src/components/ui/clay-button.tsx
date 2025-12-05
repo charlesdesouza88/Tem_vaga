@@ -21,13 +21,13 @@ export function ClayButton({
         <button
             disabled={disabled || isLoading}
             className={cn(
-                "relative inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300",
+                "relative inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/30",
                 // Sizes
                 size === "sm" && "px-4 py-2 text-sm rounded-clay-sm",
                 size === "md" && "px-6 py-3 text-base rounded-clay-md",
                 size === "lg" && "px-8 py-4 text-lg rounded-clay-lg",
                 // Variants
-                variant === "primary" && "bg-primary-700 text-white shadow-lg hover:bg-primary-800 hover:shadow-xl",
+                variant === "primary" && "bg-[#25D366] text-white shadow-lg hover:bg-[#128C7E] hover:shadow-xl",
                 variant === "secondary" && "bg-white text-neutral-800 border-2 border-neutral-300 shadow-md hover:bg-neutral-50 hover:border-neutral-400 hover:shadow-lg",
                 variant === "danger" && "bg-red-600 text-white shadow-lg hover:bg-red-700 hover:shadow-xl",
                 variant === "ghost" && "bg-transparent text-neutral-700 border border-transparent hover:bg-neutral-100 hover:border-neutral-200 shadow-none",

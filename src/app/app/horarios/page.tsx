@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { ClayCard } from "@/components/ui/clay-card"
 import { ClayButton } from "@/components/ui/clay-button"
-import { supabase } from "@/lib/supabase"
 import { Database } from "@/types/supabase"
 import { Clock, Save } from "lucide-react"
 

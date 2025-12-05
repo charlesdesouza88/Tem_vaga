@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabase-admin"
 import { Database } from "@/types/supabase"
 import { sendWaitlistOffer } from "./whatsapp"
 import { createWaitlistUpdate } from "@/lib/supabase-helpers"

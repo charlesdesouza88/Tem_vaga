@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { ClayCard } from "@/components/ui/clay-card"
 import { ClayButton } from "@/components/ui/clay-button"
 import { ClayInput } from "@/components/ui/clay-input"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin as supabase } from "@/lib/supabase-admin"
 import { Check, ChevronRight, Store, Clock, Calendar } from "lucide-react"
 
 export default function OnboardingPage() {

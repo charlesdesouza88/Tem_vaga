@@ -3,6 +3,65 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
+export async function GET() {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    try {
+        const { data: business } = await (supabaseAdmin
+            .from('Business') as any)
+            .select('*')
+            .eq('ownerId', session.user.id)
+            .single()
+
+        return NextResponse.json({ business: business || null })
+    } catch (error) {
+        console.error("Error fetching business settings:", error)
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    }
+}
+
+export async function PUT(req: Request) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    try {
+        const body = await req.json()
+        const { nome, telefoneWhats, autoReplyEnabled } = body
+
+        const { data: business } = await (supabaseAdmin
+            .from('Business') as any)
+            .select('id')
+            .eq('ownerId', session.user.id)
+            .single()
+
+        if (!business) {
+            return NextResponse.json({ error: "Business not found" }, { status: 404 })
+        }
+
+        const { error } = await (supabaseAdmin
+            .from('Business') as any)
+            .update({
+                nome,
+                telefoneWhats,
+                autoReplyEnabled,
+                updatedAt: new Date().toISOString(),
+            })
+            .eq('id', business.id)
+
+        if (error) throw error
+
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        console.error("Settings update error:", error)
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    }
+}
+
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions)
     if (!session) {
