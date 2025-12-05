@@ -23,44 +23,9 @@ export default function ClientsPage() {
 
     const fetchClients = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { data: business } = await (supabase
-                .from('Business') as any)
-                .select('id')
-                .eq('ownerId', user.id)
-                .single()
-
-            if (business) {
-                // Fetch all bookings to aggregate clients
-                // Note: In a real app with many records, this should be a database view or RPC
-                const { data: bookings } = await (supabase
-                    .from('Booking') as any)
-                    .select('clienteNome, clienteWhats, dataHora')
-                    .eq('businessId', business.id)
-                    .order('dataHora', { ascending: false })
-
-                if (bookings) {
-                    const clientMap = new Map<string, Client>()
-
-                    bookings.forEach((booking: any) => {
-                        const key = booking.clienteWhats
-                        if (!clientMap.has(key)) {
-                            clientMap.set(key, {
-                                nome: booking.clienteNome,
-                                whatsapp: booking.clienteWhats,
-                                lastBooking: booking.dataHora,
-                                totalBookings: 0
-                            })
-                        }
-                        const client = clientMap.get(key)!
-                        client.totalBookings++
-                    })
-
-                    setClients(Array.from(clientMap.values()))
-                }
-            }
+            // TODO: Create API route for clients
+            // For now, show empty state
+            setClients([])
         } catch (error) {
             console.error("Error fetching clients:", error)
         } finally {

@@ -29,37 +29,16 @@ export default function HoursPage() {
 
     const fetchHours = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { data: business } = await (supabase
-                .from('Business') as any)
-                .select('id')
-                .eq('ownerId', user.id)
-                .single()
-
-            if (business) {
-                const { data } = await (supabase
-                    .from('HorarioAtendimento') as any)
-                    .select('*')
-                    .eq('businessId', business.id)
-                    .order('diaSemana')
-
-                if (data) {
-                    // Ensure we have entries for all days
-                    const fullWeek = DAYS.map(day => {
-                        const existing = data.find((h: any) => h.diaSemana === day.id)
-                        return existing || {
-                            businessId: (business as any).id,
-                            diaSemana: day.id,
-                            inicioMin: 9 * 60,
-                            fimMin: 18 * 60,
-                            ativo: false
-                        } as WorkingHour
-                    })
-                    setHours(fullWeek)
-                }
-            }
+            // TODO: Create API route for working hours
+            // For now, set default hours
+            const defaultHours = DAYS.map(day => ({
+                businessId: '',
+                diaSemana: day.id,
+                inicioMin: 9 * 60,
+                fimMin: 18 * 60,
+                ativo: day.id >= 1 && day.id <= 5 // Monday to Friday active by default
+            } as WorkingHour))
+            setHours(defaultHours)
         } catch (error) {
             console.error("Error fetching hours:", error)
         } finally {

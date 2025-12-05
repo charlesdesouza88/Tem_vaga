@@ -26,24 +26,8 @@ export default function ServicesPage() {
 
     const fetchServices = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { data: business } = await (supabase
-                .from('Business') as any)
-                .select('id')
-                .eq('ownerId', user.id)
-                .single()
-
-            if (business) {
-                const { data } = await (supabase
-                    .from('Servico') as any)
-                    .select('*')
-                    .eq('businessId', (business as any).id)
-                    .order('nome')
-
-                if (data) setServices(data)
-            }
+            // TODO: Create API route for services
+            setServices([])
         } catch (error) {
             console.error("Error fetching services:", error)
         } finally {
@@ -56,40 +40,11 @@ export default function ServicesPage() {
         setIsLoading(true)
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { data: business } = await (supabase
-                .from('Business') as any)
-                .select('id')
-                .eq('ownerId', user.id)
-                .single()
-
-            if (!business) return
-
-            const serviceData = {
-                businessId: (business as any).id,
-                nome: formData.nome,
-                preco: Math.round(parseFloat(formData.preco.replace(',', '.')) * 100), // Convert to cents
-                duracaoMin: parseInt(formData.duracaoMin),
-                ativo: true
-            }
-
-            if (editingService) {
-                await (supabase
-                    .from('Servico') as any)
-                    .update(serviceData)
-                    .eq('id', editingService.id)
-            } else {
-                await (supabase
-                    .from('Servico') as any)
-                    .insert(serviceData)
-            }
-
+            // TODO: Create API route for services
+            alert("Funcionalidade em desenvolvimento")
             setIsModalOpen(false)
             setEditingService(null)
             setFormData({ nome: "", preco: "", duracaoMin: "60" })
-            fetchServices()
         } catch (error) {
             console.error("Error saving service:", error)
             alert("Erro ao salvar serviço")
@@ -102,8 +57,8 @@ export default function ServicesPage() {
         if (!confirm("Tem certeza que deseja excluir este serviço?")) return
 
         try {
-            await (supabase.from('Servico') as any).delete().eq('id', id)
-            fetchServices()
+            // TODO: Create API route for services
+            alert("Funcionalidade em desenvolvimento")
         } catch (error) {
             console.error("Error deleting service:", error)
             alert("Erro ao excluir serviço")
