@@ -49,14 +49,8 @@ export default function HoursPage() {
     const handleSave = async () => {
         setIsSaving(true)
         try {
-            // Upsert all hours
-            const { error } = await (supabase
-                .from('HorarioAtendimento') as any)
-                .upsert(hours.map(({ id, ...h }) => h)) // Remove ID for upsert if it's temporary
-
-            if (error) throw error
-            alert("Horários salvos com sucesso!")
-            fetchHours() // Refresh to get IDs
+            // TODO: Create API route for working hours
+            alert("Funcionalidade em desenvolvimento")
         } catch (error) {
             console.error("Error saving hours:", error)
             alert("Erro ao salvar horários")
