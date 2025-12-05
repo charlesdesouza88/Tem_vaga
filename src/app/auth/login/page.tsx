@@ -94,7 +94,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-primary-700 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 active:scale-95"
+                            className="w-full bg-[#25D366] text-white py-4 rounded-xl font-bold text-base hover:bg-[#128C7E] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/30 active:scale-95"
                         >
                             {loading ? (
                                 "Entrando..."
